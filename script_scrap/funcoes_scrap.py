@@ -3,7 +3,7 @@ from urllib.request import urlopen
 from bs4 import BeautifulSoup
 import requests
 
-def constroi_url(url, query, pagina, url_pagina, tema):
+def constroi_url(url, query, url_pagina, tema):
     url = url
     query = query
     

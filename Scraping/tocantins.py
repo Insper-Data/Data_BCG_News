@@ -81,8 +81,10 @@ def scrap_to_agora_tocantins(tema, data_path, values_path):
 
     try:
         df_values = pd.read_csv(f"{values_path}/{SIGLA}.csv", index_col=[0])
-        df.append(df_values)
+        df = df.append(df_values)
+        df.drop_duplicates(inplace=True)
         df.to_csv(f"{values_path}/{SIGLA}.csv")
+
     except FileNotFoundError:
         df.to_csv(f"{values_path}/{SIGLA}.csv")
 

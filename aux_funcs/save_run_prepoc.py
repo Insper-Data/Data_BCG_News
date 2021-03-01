@@ -2,7 +2,6 @@ from datetime import date
 from numpy import nan
 from oficial import retorna_texto_limpo
 import pandas as pd
-import os
 from Prepoc.prepoc_funcs import *
 
 

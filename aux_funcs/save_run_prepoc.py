@@ -32,5 +32,5 @@ def save_run_prepoc(path_drive, drop_punct=False, strip_accents=False, drop_stop
                 print('HOUVE UM ERRO DURANTE O PRÉ-PROCESSAMENTO')
 
     df['artigo'] = lista_artigo_limpo
-    data_do_dia = date.today()
+    data_do_dia = str(date.today())
     df.to_csv(f'{path_drive}/Prepoc/{data_do_dia}.csv')

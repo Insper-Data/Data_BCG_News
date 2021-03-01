@@ -28,6 +28,7 @@ def save_run_prepoc(path_drive, drop_punct=False, strip_accents=False, drop_stop
 			texto = stem_and_lemmatize(texto)
 		if clean_text:
                 	texto = retorna_texto_limpo(texto)
+		lista_artigo_limpo.append(texto)
             except:
                 print('HOUVE UM ERRO DURANTE O PRÉ-PROCESSAMENTO')
 

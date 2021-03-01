@@ -13,7 +13,7 @@ pt_lematizer = WordNetLemmatizer()
 
 
 # Função que remove os \n e toda pontuação
-def remove_pontuação(texto):
+def remove_punctuation(texto):
 
     texto_ = texto.replace('\\n', '')
     texto_limpo = ''.join(
@@ -30,7 +30,7 @@ def strip_accents(string, accents=('COMBINING ACUTE ACCENT', 'COMBINING GRAVE AC
     return unicodedata.normalize('NFC', ''.join(chars))
 
 
-def remove_stop_words(text):
+def drop_stopwords(text):
     lista_text = text.split()
     sem_stop_words = [
         text for text in lista_text if text not in lista_stopwords_pt]
@@ -39,14 +39,14 @@ def remove_stop_words(text):
     return texto_sem_stop_words
 
 
-def stem_e_lematizze_text(texto):
+def stem_and_lem(texto):
     stem_text = [pt_stemmer.stem(word) for word in word_tokenize(texto)]
     lematizze_text = [pt_lematizer.lemmatize(word) for word in stem_text]
 
     return lematizze_text
 
 
-def retorna_texto_limpo(text):
+def clean_text(text):
     texto_sem_pontuacao = remove_pontuação(text)
     texto_sem_acento = strip_accents(texto_sem_pontuacao)
     texto_pos_regex = re.sub(

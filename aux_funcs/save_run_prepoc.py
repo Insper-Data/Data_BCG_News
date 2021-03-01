@@ -1,12 +1,15 @@
 from datetime import date
 from numpy import nan
 from oficial import retorna_texto_limpo
+import pandas as pd
 
-def save_run_prepoc(df):
+def save_run_prepoc(path_drive):
+	
+    df = pd.read_csv(path_drive + "/Raw/Values/index.csv")
     coluna_run_id = list(df.unique_identifier)
     lista_artigo_limpo = []
     for run_id in coluna_run_id:
-        with open(f'{run_id}.txt', 'r') as text:
+        with open(f'path_drive + "/Raw/data/"{run_id}.txt', 'r') as text:
             texto = text.read()
         if len(texto) < 4:
             lista_artigo_limpo.append(nan)
@@ -18,4 +21,4 @@ def save_run_prepoc(df):
 
     df['artigo'] = lista_artigo_limpo
     data_do_dia = date.today()
-    df.to_csv(f'./{data_do_dia}.csv')
+    df.to_csv(f'{path_drive}/Prepoc/{data_do_dia}.csv')

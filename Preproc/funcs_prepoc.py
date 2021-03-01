@@ -39,7 +39,7 @@ def drop_stopwords(text):
     return texto_sem_stop_words
 
 
-def stem_and_lem(texto):
+def stem_and_lem(text):
     stem_text = [pt_stemmer.stem(word) for word in word_tokenize(texto)]
     lematizze_text = [pt_lematizer.lemmatize(word) for word in stem_text]
 

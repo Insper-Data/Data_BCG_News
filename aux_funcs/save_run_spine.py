@@ -4,6 +4,7 @@ from datetime import date
 import os
 from aux_funcs.set_path import path_drive
 
+
 def save_run_spine(run_id_list):
 
     # Getting today's date
@@ -13,8 +14,8 @@ def save_run_spine(run_id_list):
     paths_vars = []
     paths_dicts = []
     for var in run_id_list:
-        paths_vars.append(f"{path_drive}/{var}.csv")
-        paths_dicts.append(f"{path_drive}.pickle")
+        paths_vars.append(f"{path_drive}/Variables/{var}.csv")
+        paths_dicts.append(f"{path_drive}/Variables/dict_{var}.pickle")
 
     # Merging variables
     df_list = []
@@ -29,7 +30,7 @@ def save_run_spine(run_id_list):
     # Saving spine info on list of dictionaries
     spine_info = []
     for i in range(len(paths_dicts)):
-        with open(paths_dicts[i]) as f:
+        with open(paths_dicts[i], "rb") as f:
             dict_i = pickle.load(f)
             spine_info.append(dict_i)
 
@@ -41,3 +42,6 @@ def save_run_spine(run_id_list):
             with open(f'{path_drive}/Spine/dict_spine_{data}_{i}.pickle', 'wb') as file:
                 pickle.dump(spine_info, file)
             break
+
+
+# save_run_spine(["blabla_2021-03-05_0", "teste_2021-03-05_9"])  # # EXEMPLO

@@ -12,7 +12,7 @@ def save_run_prepoc(drop_punct=False, strip_accents=False, drop_stopwords=False,
     coluna_run_id = list(df.unique_identifier)
     lista_artigo_limpo = []
     for run_id in coluna_run_id:
-        with open(f'{path_drive}"/Raw/data/"{run_id}.txt', 'r') as text:
+        with open(f'{path_drive}/Raw/data/{run_id}.txt', 'r') as text:
             texto = text.read()
         if len(texto) < 4:
             lista_artigo_limpo.append(nan)
@@ -41,3 +41,6 @@ def save_run_prepoc(drop_punct=False, strip_accents=False, drop_stopwords=False,
         if not path.exists(path_file):
             df.to_csv(f'{path_drive}/Prepoc/{data_do_dia}_{i}.csv')
             break
+
+
+# save_run_prepoc()  # # Exemplo -> Sem parâmetros pega clean_text como default = Faz tudo

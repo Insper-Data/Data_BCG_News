@@ -1,14 +1,29 @@
+import string
 import re
 import unicodedata
 from nltk.corpus import stopwords
 from nltk.stem import SnowballStemmer
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
+import ssl
+import nltk
+
+# # Desabilitando verificação de ssh  #### Usar isso se o download do nltk data falhar
+# try:
+#     _create_unverified_https_context = ssl._create_unverified_context
+# except AttributeError:
+#     pass
+# else:
+#     ssl._create_default_https_context = _create_unverified_https_context
+#
 
 # variaveis para limpeza
 lista_stopwords_pt = stopwords.words('portuguese')
 pt_stemmer = SnowballStemmer('portuguese')
 pt_lematizer = WordNetLemmatizer()
+
+# # Download de dados do nltk
+# nltk.download("wordnet")
 
 
 # Função que remove os \n e toda pontuação
@@ -41,15 +56,16 @@ def stem_and_lemmatize(text):
     stem_text = [pt_stemmer.stem(word) for word in word_tokenize(text)]
     lematizze_text = [pt_lematizer.lemmatize(word) for word in stem_text]
 
-    return lematizze_text
+    return " ".join(lematizze_text)
 
 
 def clean_text_func(text):
     texto_sem_pontuacao = remove_punctuation(text)
-    texto_sem_acento = strip_accents(texto_sem_pontuacao)
+    texto_sem_acento = remove_accents(texto_sem_pontuacao)
     texto_pos_regex = re.sub(
         r"(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)|^rt|http.+?|[0-9.*]", "", texto_sem_acento).strip()
-    texto_sem_stopword = drop_stopwords(texto_pos_regex)
-    texto_stematizado_e_lematizado = stem_and_lem(texto_sem_stopword)
+    texto_sem_stopword = remove_stopwords(texto_pos_regex)
+    texto_stematizado_e_lematizado = stem_and_lemmatize(texto_sem_stopword)
 
-    return ' '.join(texto_stematizado_e_lematizado)
+    return texto_stematizado_e_lematizado
+

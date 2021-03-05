@@ -20,6 +20,7 @@ def save_run_variable(path_drive, run_id, func_name):
         path_file = f'{path_drive}/Variables/{func_name}_{data}_{i}.csv'
         if not path.exists(path_file):
             df.to_csv(f'{path_drive}/Variables/{func_name}_{data}_{i}.csv')
-            with open(f'{path_drive}/Variables/dict_{func_name}_{data}_{i}', 'wb') as file:
+            info["variable"] = f'{func_name}_{data}_{i}'
+            with open(f'{path_drive}/Variables/dict_{func_name}_{data}_{i}.pickle', 'wb') as file:
                 pk.dump(info, file)
             break

@@ -2,9 +2,9 @@ import pandas as pd
 import pickle
 from datetime import date
 import os
+from aux_funcs.set_path import path_drive
 
-
-def save_run_spine(path_drive, run_id_list):
+def save_run_spine(run_id_list):
 
     # Getting today's date
     data = str(date.today())

@@ -5,6 +5,7 @@ from Preproc.funcs_prepoc import *
 from os import path
 from aux_funcs.set_path import path_drive
 
+
 def save_run_prepoc(drop_punct=False, strip_accents=False, drop_stopwords=False, stem_and_lem=False,
                     clean_text=True):
     df = pd.read_csv(path_drive + "/Raw/Values/index.csv")

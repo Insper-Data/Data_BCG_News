@@ -3,8 +3,10 @@ import pandas as pd
 from Vars.var_funcs import *
 from os import path
 import pickle as pk
+from aux_funcs.set_path import path_drive
 
-def save_run_variable(path_drive, run_id, func_name):
+
+def save_run_variable(run_id, func_name):
 
     df = pd.read_csv(f"{path_drive}/{run_id}.csv")
     data = str(date.today())

@@ -10,6 +10,6 @@ def teste(run_id):
 
 
 def blabla(run_id):
-    df = pd.read_csv(f"{path_drive}/Prepoc/{run_id}.csv",index_col=0)
+    df = pd.read_csv(f"{path_drive}/Prepoc/{run_id}.csv", index_col=0)
     df["blabla"] = "blabla"
     return df

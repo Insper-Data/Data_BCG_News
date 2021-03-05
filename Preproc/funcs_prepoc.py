@@ -1,4 +1,3 @@
-mport string
 import re
 import unicodedata
 from nltk.corpus import stopwords
@@ -14,7 +13,6 @@ pt_lematizer = WordNetLemmatizer()
 
 # Função que remove os \n e toda pontuação
 def remove_punctuation(texto):
-
     texto_ = texto.replace('\\n', '')
     texto_limpo = ''.join(
         [letter for letter in texto_.lower() if letter not in string.punctuation])
@@ -23,14 +21,14 @@ def remove_punctuation(texto):
   
 # Função que remove os acentos de cada palavra sem tirar a letra
 # link da função: https://www.edureka.co/community/68910/what-is-the-best-way-remove-accents-in-python-unicode-string
-def strip_accents(string, accents=('COMBINING ACUTE ACCENT', 'COMBINING GRAVE ACCENT', 'COMBINING TILDE')):
+def remove_accents(string, accents=('COMBINING ACUTE ACCENT', 'COMBINING GRAVE ACCENT', 'COMBINING TILDE')):
     accents = set(map(unicodedata.lookup, accents))
     chars = [c for c in unicodedata.normalize(
         'NFD', string) if c not in accents]
     return unicodedata.normalize('NFC', ''.join(chars))
 
 
-def drop_stopwords(text):
+def remove_stopwords(text):
     lista_text = text.split()
     sem_stop_words = [
         text for text in lista_text if text not in lista_stopwords_pt]
@@ -39,19 +37,19 @@ def drop_stopwords(text):
     return texto_sem_stop_words
 
 
-def stem_and_lem(text):
-    stem_text = [pt_stemmer.stem(word) for word in word_tokenize(texto)]
+def stem_and_lemmatize(text):
+    stem_text = [pt_stemmer.stem(word) for word in word_tokenize(text)]
     lematizze_text = [pt_lematizer.lemmatize(word) for word in stem_text]
 
     return lematizze_text
 
 
-def clean_text(text):
-    texto_sem_pontuacao = remove_pontuação(text)
+def clean_text_func(text):
+    texto_sem_pontuacao = remove_punctuation(text)
     texto_sem_acento = strip_accents(texto_sem_pontuacao)
     texto_pos_regex = re.sub(
         r"(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)|^rt|http.+?|[0-9.*]", "", texto_sem_acento).strip()
-    texto_sem_stopword = remove_stop_words(texto_pos_regex)
-    texto_stematizado_e_lematizado = stem_e_lematizze_text(texto_sem_stopword)
+    texto_sem_stopword = drop_stopwords(texto_pos_regex)
+    texto_stematizado_e_lematizado = stem_and_lem(texto_sem_stopword)
 
     return ' '.join(texto_stematizado_e_lematizado)

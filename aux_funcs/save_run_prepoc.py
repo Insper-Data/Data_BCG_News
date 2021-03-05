@@ -1,11 +1,11 @@
 from datetime import date
 from numpy import nan
 import pandas as pd
-from Prepoc.prepoc_funcs import *
+from Preproc.funcs_prepoc import *
 from os import path
+from aux_funcs.set_path import path_drive
 
-
-def save_run_prepoc(path_drive, drop_punct=False, strip_accents=False, drop_stopwords=False, stem_and_lem=False,
+def save_run_prepoc(drop_punct=False, strip_accents=False, drop_stopwords=False, stem_and_lem=False,
                     clean_text=True):
     df = pd.read_csv(path_drive + "/Raw/Values/index.csv")
     coluna_run_id = list(df.unique_identifier)
@@ -20,13 +20,13 @@ def save_run_prepoc(path_drive, drop_punct=False, strip_accents=False, drop_stop
                 if drop_punct:
                     texto = remove_punctuation(texto)
                 if strip_accents:  # NÃO PODE SER ELIF PQ PRECISA CHECAR TODAS AS CONDIÇÕES!!!
-                    texto = strip_accents(texto)
+                    texto = remove_accents(texto)
                 if drop_stopwords:
-                    texto = remove_stop_words(texto)
+                    texto = remove_stopwords(texto)
                 if stem_and_lem:
                     texto = stem_and_lemmatize(texto)
                 if clean_text:
-                    texto = retorna_texto_limpo(texto)
+                    texto = clean_text_func(texto)
                 lista_artigo_limpo.append(texto)
             except:
                 print('HOUVE UM ERRO DURANTE O PRÉ-PROCESSAMENTO')

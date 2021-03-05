@@ -23,9 +23,9 @@ def save_run_variable(run_id, func_name):
         if not path.exists(path_file):
             var.to_csv(f'{path_drive}/Variables/{func_name}_{data}_{i}.csv')
             info["variable"] = f'{func_name}_{data}_{i}'
-            with open(f'{path_drive}/Variables/dict_{func_name}_{data}_{i}.pickle', 'wb') as file:
+            with open(f'{path_drive}/Variables/info_{func_name}_{data}_{i}.pickle', 'wb') as file:
                 pk.dump(info, file)
             break
 
 
-# save_run_variable("2021-03-05_0", "blabla")  # # EXEMPLO
+# save_run_variable("2021-03-05_0", "teste")  # # EXEMPLO

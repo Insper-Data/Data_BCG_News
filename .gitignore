@@ -131,3 +131,6 @@ dmypy.json
 # Adições 
 .DS_Store
 .idea
+
+# Set_path
+set_path.py

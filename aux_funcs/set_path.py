@@ -1,2 +1,2 @@
-# Insira o path do OneDrive aqui!!!
-path_drive = ""
+# Path do OneDrive
+path_drive = "path do OneDrive"

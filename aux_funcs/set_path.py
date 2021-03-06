@@ -1,2 +1,2 @@
 # Path do OneDrive
-path_drive = "Path do OneDrivr"
+path_drive = "Path do OneDrive"

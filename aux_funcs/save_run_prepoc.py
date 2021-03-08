@@ -37,9 +37,9 @@ def save_run_prepoc(drop_punct=False, strip_accents=False, drop_stopwords=False,
 
     # Checando se arquivo já existe para determinar o run id
     for i in range(0, 1000):
-        path_file = f'{path_drive}/Prepoc/{data_do_dia}_{i}.csv'
+        path_file = f'{path_drive}/Preproc/{data_do_dia}_{i}.csv'
         if not path.exists(path_file):
-            df.to_csv(f'{path_drive}/Prepoc/{data_do_dia}_{i}.csv')
+            df.to_csv(f'{path_drive}/Preproc/{data_do_dia}_{i}.csv')
             break
 
 

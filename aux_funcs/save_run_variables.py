@@ -6,7 +6,7 @@ import pickle as pk
 from aux_funcs.set_path import path_drive
 
 
-def save_run_variable(run_id, func_name):
+def save_run_variable(func_name, run_id=""):
 
     # Getting today's date
     data = str(date.today())
@@ -28,4 +28,4 @@ def save_run_variable(run_id, func_name):
             break
 
 
-# # save_run_variable("2021-03-05_0", "teste")  # # EXEMPLO
+# # save_run_variable("teste", "2021-03-05_0")  # # EXEMPLO

@@ -3,7 +3,7 @@ from numpy import nan
 import pandas as pd
 from Preproc.funcs_prepoc import *
 from os import path
-from aux_funcs.set_path import path_drive
+from set_path import path_drive
 
 
 def save_run_prepoc(drop_punct=False, strip_accents=False, drop_stopwords=False, stem_and_lem=False,
@@ -34,7 +34,7 @@ def save_run_prepoc(drop_punct=False, strip_accents=False, drop_stopwords=False,
 
     df['artigo'] = lista_artigo_limpo
     data_do_dia = str(date.today())
-    
+
     # Checando se arquivo já existe para determinar o run id
     for i in range(0, 1000):
         path_file = f'{path_drive}/Prepoc/{data_do_dia}_{i}.csv'

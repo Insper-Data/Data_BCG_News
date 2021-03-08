@@ -28,4 +28,4 @@ def save_run_variable(run_id, func_name):
             break
 
 
-# save_run_variable("2021-03-05_0", "teste")  # # EXEMPLO
+# # save_run_variable("2021-03-05_0", "teste")  # # EXEMPLO

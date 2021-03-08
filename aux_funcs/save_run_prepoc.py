@@ -1,13 +1,12 @@
 from datetime import date
 from numpy import nan
 import pandas as pd
-from Preproc.funcs_prepoc import *
+from Preproc.funcs_preproc import *
 from os import path
 from aux_funcs.set_path import path_drive
 
 
-def save_run_prepoc(drop_punct=False, strip_accents=False, drop_stopwords=False, stem_and_lem=False,
-                    clean_text=True):
+def save_run_preproc(drop_punct=False, strip_accents=False, drop_stopwords=False, stem_and_lem=False, clean_text=True):
     df = pd.read_csv(path_drive + "/Raw/Values/index.csv", index_col=0)
     coluna_run_id = list(df.unique_identifier)
     lista_artigo_limpo = []
@@ -43,4 +42,4 @@ def save_run_prepoc(drop_punct=False, strip_accents=False, drop_stopwords=False,
             break
 
 
-save_run_prepoc()  # # Exemplo -> Sem parâmetros pega clean_text como default = Faz tudo
+# # # save_run_prepoc()  # # Exemplo -> Sem parâmetros pega clean_text como default = Faz tudo

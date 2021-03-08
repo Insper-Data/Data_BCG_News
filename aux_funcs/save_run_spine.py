@@ -44,4 +44,4 @@ def save_run_spine(run_id_list):
             break
 
 
-# save_run_spine(["blabla_2021-03-05_0", "teste_2021-03-05_0"])  # # EXEMPLO
+# # save_run_spine(["blabla_2021-03-05_0", "teste_2021-03-05_0"])  # # EXEMPLO

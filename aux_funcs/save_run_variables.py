@@ -6,16 +6,21 @@ import pickle as pk
 from aux_funcs.set_path import path_drive
 
 
-def save_run_variable(func_name, run_id=""):
+def save_run_variable(func_name, min_df=0.001, max_features=10000, run_id=""):
+
+    # min_df --> minimum TF-IDF value to keep in DataFrame
+    # max_features --> max number of variables
 
     # Getting today's date
     data = str(date.today())
 
     # Running var function with eval
-    var = eval(func_name)(run_id)
+    var = eval(func_name)(path_drive, min_df, max_features, run_id)
 
     # Pickle with preproc info
-    info = {"preproc": run_id}
+    info = {"preproc": run_id,
+            "min_df": min_df,
+            "max_features": max_features}
 
     # Checando se arquivo já existe para determinar o run id
     for i in range(0, 1000):
@@ -27,5 +32,6 @@ def save_run_variable(func_name, run_id=""):
                 pk.dump(info, file)
             break
 
+    print("Arquivo salvo e processo finalizado.")
 
 # # save_run_variable("teste", "2021-03-05_0")  # # EXEMPLO

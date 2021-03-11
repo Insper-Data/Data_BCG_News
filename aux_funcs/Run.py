@@ -4,12 +4,11 @@ from aux_funcs.save_run_spine import *
 
 # # # # EXEMPLO DE EXECUÇÃO
 # # Pre-processing
-# save_run_preproc()
+#save_run_preproc()
 
 
 # # Variables
-# save_run_variable("2021-03-08_0", "teste")
-# save_run_variable("2021-03-08_0", "blabla")
+save_run_variable("var_tfidf")
 #
 #
 # # Spine

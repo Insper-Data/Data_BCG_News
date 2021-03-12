@@ -17,15 +17,18 @@ def save_run_spine(run_id_list):
         paths_vars.append(f"{path_drive}/Variables/{var}.csv")
         paths_dicts.append(f"{path_drive}/Variables/info_{var}.pickle")
 
-    # Merging variables
-    df_list = []
-    for path in paths_vars:
-        df_i = pd.read_csv(path, index_col=0)
-        df_list.append(df_i)
+    if len(run_id_list) > 1:
+        # Merging variables
+        df_list = []
+        for path in paths_vars:
+            df_i = pd.read_csv(path, index_col=0)
+            df_list.append(df_i)
 
-    df_list = [df.set_index(["unique_identifier", "sigla", "nome_jornal", "termo_de_busca",
-                           "data", "manchete", "artigo"]) for df in df_list]
-    df_spine = pd.concat(df_list, axis=1).reset_index()
+        df_list = [df.set_index(["unique_identifier", "sigla", "nome_jornal", "termo_de_busca",
+                               "data", "manchete", "artigo"]) for df in df_list]
+        df_spine = pd.concat(df_list, axis=1).reset_index()
+    else:
+        df_spine = pd.read_csv(paths_vars[0])
 
     # Saving spine info on list of dictionaries
     spine_info = []
@@ -42,6 +45,5 @@ def save_run_spine(run_id_list):
             with open(f'{path_drive}/Spine/info_spine_{data}_{i}.pickle', 'wb') as file:
                 pickle.dump(spine_info, file)
             break
-
 
 # # save_run_spine(["blabla_2021-03-05_0", "teste_2021-03-05_0"])  # # EXEMPLO

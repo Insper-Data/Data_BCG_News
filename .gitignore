@@ -133,4 +133,4 @@ dmypy.json
 .idea
 
 # Set_path
-set_path.py
+./aux_funcs/set_path.py

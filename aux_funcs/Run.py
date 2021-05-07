@@ -8,7 +8,7 @@ from aux_funcs.save_run_spine import *
 
 
 # # Variables
-save_run_variable("var_tfidf")
+save_run_variable("Bolsonaro", "var_tfidf")
 #
 #
 # # Spine

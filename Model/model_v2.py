@@ -12,7 +12,7 @@ import plotly.express as px
 import os
 from sklearn.metrics import accuracy_score, confusion_matrix, roc_auc_score
 from tqdm import tqdm
-from make_boruta import *
+from Model.make_boruta import *
 
 
 class Zeus:

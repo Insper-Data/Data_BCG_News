@@ -9,8 +9,8 @@ from aux_funcs.save_run_spine import *
 
 # # Variables
 save_run_variable("Bolsonaro", "var_tfidf")
-#
-#
+
+
 # # Spine
 # save_run_spine(["teste_2021-03-08_0", "blabla_2021-03-08_0"])
 

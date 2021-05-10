@@ -1,13 +1,27 @@
-from aux_funcs.set_path import path_drive
 from Vars.aux_funcs_var import *
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 import os
 from tqdm import tqdm
+import ast
+
+# # USUÁRIO
+USUARIO = "MAX"
+
+# # Lendo arquivo com paths
+path_atual = os.getcwd()
+path_aux = path_atual.replace("Vars", r"aux_funcs/")
+arquivo_path = open(f'{path_aux}/set_path.py', 'r')
+ler_arquivo = arquivo_path.read()
+dicionario = ast.literal_eval(ler_arquivo)
+path_drive = dicionario[USUARIO]
+
+path = f"{path_drive}/Preproc/"
+arquivos = os.listdir(path)
+arquivo_mais_recente(arquivos)
 
 # Funções de criação de variáveis
-
-def var_tfidf (termo_de_busca, path_drive, min_df, max_features, run_id):
+def var_tfidf (termo_de_busca, min_df, max_features, run_id=""):
     # Abrindo arquivo
     path = f"{path_drive}/Preproc/"
     arquivos = os.listdir(path)
@@ -15,6 +29,8 @@ def var_tfidf (termo_de_busca, path_drive, min_df, max_features, run_id):
     # Encontrando mais recente
     if run_id == "":
         arquivo = arquivo_mais_recente(arquivos)
+    else:
+        arquivo = run_id
 
     # Criando e limpando DF (retirnado linhas de artigos vazios)
     df = pd.read_csv(f"{path}{arquivo}", index_col=0)
@@ -52,3 +68,8 @@ def var_tfidf (termo_de_busca, path_drive, min_df, max_features, run_id):
 
     print("Criação de variáveis por TF-IDF finalizada")
     return df10, df90
+arquivos = os.listdir(path)
+arquivos
+arquivo_mais_recente(arquivos)
+
+# # var_tfidf("Bolsonaro", min_df=0.001, max_features=1000) # # Exemplo

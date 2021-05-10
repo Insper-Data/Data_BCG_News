@@ -3,12 +3,12 @@ from aux_funcs.save_run_variables import *
 from aux_funcs.save_run_spine import *
 
 # # # # EXEMPLO DE EXECUÇÃO
-# # Pre-processing
-#save_run_preproc()
+# Pre-processing
+# save_run_preproc()
 
 
-# # Variables
-save_run_variable("Bolsonaro", "var_tfidf")
+# # # # Variables
+# save_run_variable("Bolsonaro", "var_tfidf", min_df=0.001, max_features=10000)
 
 
 # # Spine

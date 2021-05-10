@@ -75,7 +75,8 @@ class Zeus:
             print('USUARIO VALIDO !')
             self.path_user = dicionario[self.user]
         else:
-            raise TypeError('O USUARIO SELECIONADO NÃO TEM UM ENDEREÇO VALIDO CADASTRADO')
+            raise TypeError(
+                'O USUARIO SELECIONADO NÃO TEM UM ENDEREÇO VALIDO CADASTRADO')
 
         arquivo_path.close()
 
@@ -146,13 +147,15 @@ class Zeus:
                 self.filtro = (self.var_teste.sigla == self.local.upper())
 
     def filtrar_treino(self, local=False, data_start=False, data_end=False):
-        self.seleciona_filtros(local=local, data_start=data_start, data_end=data_end)
+        self.seleciona_filtros(
+            local=local, data_start=data_start, data_end=data_end)
         self.construir_filtro()
         self.var_treino.data = pd.to_datetime(self.var_treino.data)
 
         if self.data_active and self.data_local:
             self.var_treino = self.var_treino[self.filtro]
-            self.var_treino = self.var_treino[(self.var_treino.data > self.data_start) & (self.var_treino.data < self.data_end)]
+            self.var_treino = self.var_treino[(self.var_treino.data > self.data_start) & (
+                self.var_treino.data < self.data_end)]
         elif self.data_active and not self.data_local:
             self.var_treino = self.var_treino[
                 (self.var_treino.data > self.data_start) & (self.var_treino.data < self.data_end)]
@@ -160,7 +163,8 @@ class Zeus:
             self.var_treino = self.var_treino[self.filtro]
 
     def filtrar_teste(self, local=False, data_start=False, data_end=False):
-        self.seleciona_filtros(local=local, data_start=data_start, data_end=data_end)
+        self.seleciona_filtros(
+            local=local, data_start=data_start, data_end=data_end)
         self.construir_filtro(teste=True)
         self.var_teste.data = pd.to_datetime(self.var_teste.data)
 
@@ -182,8 +186,10 @@ class Zeus:
         for i in range(numero_de_amostras):
             unique_identifier = self.var_treino['unique_identifier']
             df_com_drop = self.var_treino.drop(columns=colunas_pro_drop)
-            df_com_colunas_sorteadas = df_com_drop.sample(frac=porcentagem_para_criacao, replace=True, axis=1)
-            amostra = pd.concat([unique_identifier, df_com_colunas_sorteadas], axis=1)
+            df_com_colunas_sorteadas = df_com_drop.sample(
+                frac=porcentagem_para_criacao, replace=True, axis=1)
+            amostra = pd.concat(
+                [unique_identifier, df_com_colunas_sorteadas], axis=1)
             amostra_sintetica = pd.DataFrame()
             amostra = amostra.loc[:, ~amostra.columns.duplicated()]
 
@@ -220,7 +226,8 @@ class Zeus:
             self.thr_bor_ok = thr_bor_ok
             self.boruta_percs = boruta_percs
             self.boruta_res = boruta_select(
-                X_df=self.X[[col for col in self.full_cols if col not in self.take_out_cols]],
+                X_df=self.X[[
+                    col for col in self.full_cols if col not in self.take_out_cols]],
                 Y=self.Y, perc_list=self.boruta_percs, allowed_perc_good=self.thr_bor_good,
                 allowed_perc_med=self.thr_bor_ok)
 
@@ -305,8 +312,10 @@ class Zeus:
         self.G = G
 
     def rodando_louvain(self, porcentagem_do_sample):
-        self.criando_matriz_de_similaridade(porcentagem_do_sample=porcentagem_do_sample)
-        self.clusters = (community.best_partition(self.G, weight='weight', randomize=True))
+        self.criando_matriz_de_similaridade(
+            porcentagem_do_sample=porcentagem_do_sample)
+        self.clusters = (community.best_partition(
+            self.G, weight='weight', randomize=True))
 
     def desenha_cluster_no_edges(self):
         plt.figure(figsize=(12, 8), dpi=150)
@@ -381,10 +390,10 @@ class Zeus:
             trained_models = model_to_train.fit(X=X.values, y=Y)
 
         self.models = trained_models
-        self.previsão = trained_models.predict(self.var_teste[self.col_lists[0]])
+        self.previsão = trained_models.predict(
+            self.var_teste[self.col_lists[0]])
         self.resultado = self.previsão
         self.var_teste['label'] = self.resultado
-
 
         print('FREQUENCIA CLUSTER')
         print(self.df_cluster.Label.value_counts(sort=False))
@@ -396,9 +405,9 @@ class Zeus:
         for i in range(len(self.var_teste.label.unique())):
             df_data = pd.DataFrame({'word': self.var_teste[self.var_teste.label == i].drop(
                 columns=['label']).sum(axis=0).nlargest(numero).index.tolist(),
-                                    'value': self.var_teste[self.var_teste.label == i].drop(
-                                        columns=['label']).sum(axis=0).nlargest(
-                                        numero).values.tolist()})
+                'value': self.var_teste[self.var_teste.label == i].drop(
+                columns=['label']).sum(axis=0).nlargest(
+                numero).values.tolist()})
 
             fig = px.bar(df_data, x='word', y='value', color='value')
             fig.show()
@@ -410,7 +419,7 @@ class Zeus:
             'run_id_treino': self.treino_id,
             'run_id_teste': self.test_id,
             'path_user': self.path_user,
-            'filtro_nome': self.nome,
+            'filtro_nome': self.term,
             'filtro_data': self.data,
             'filtro_local': self.local,
             'numero_de_amostras_bases_sinteticas': self.numero_de_amostras_sinteticas_para_criar,
@@ -419,7 +428,6 @@ class Zeus:
 
         }
 
-        file = open(f"../Spine/{self.user}_model_documentation_{self.data}", "wb")
+        file = open(
+            f"../Spine/{self.user}_model_documentation_{self.data}", "wb")
         pickle.dump(informações, file)
-
-

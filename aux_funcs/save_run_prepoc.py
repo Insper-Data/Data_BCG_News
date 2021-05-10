@@ -3,8 +3,18 @@ from numpy import nan
 import pandas as pd
 from Preproc.funcs_preproc import *
 from os import path
-from aux_funcs.set_path import path_drive
-from tqdm import tqdm
+import os
+import ast
+
+# # USUÁRIO
+USUARIO = "MAX"
+
+# # Lendo arquivo com paths
+path_atual = os.getcwd()
+arquivo_path = open('set_path.py', 'r')
+ler_arquivo = arquivo_path.read()
+dicionario = ast.literal_eval(ler_arquivo)
+path_drive = dicionario[USUARIO]
 
 
 def save_run_preproc(drop_punct=False, strip_accents=False, drop_stopwords=False, stem_and_lem=False, clean_text=True):

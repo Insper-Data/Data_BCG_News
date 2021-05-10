@@ -3,7 +3,17 @@ import pandas as pd
 from Vars.var_funcs import *
 from os import path
 import pickle as pk
-from aux_funcs.set_path import path_drive
+import ast
+
+# # USUÁRIO
+USUARIO = "MAX"
+
+# # Lendo arquivo com paths
+path_atual = os.getcwd()
+arquivo_path = open('set_path.py', 'r')
+ler_arquivo = arquivo_path.read()
+dicionario = ast.literal_eval(ler_arquivo)
+path_drive = dicionario[USUARIO]
 
 
 def save_run_variable(termo_de_busca, func_name, min_df=0.001, max_features=10000, run_id=""):

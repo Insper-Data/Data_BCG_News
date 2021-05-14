@@ -2,16 +2,17 @@ import os
 from datetime import date
 
 def arquivo_mais_recente(lista_arquivos):
-
     data_mais_recente = date(2021 ,1 ,1)
     maior_id = 0
     nome_arquivo_mais_recente = str()
 
-    lista_csv = [arquivo for arquivo in lista_arquivos if arquivo.split(".")[-1] == "csv"]
+    for i in lista_arquivos:
+        if i == ".DS_Store":
+            lista_arquivos.remove(".DS_Store")
 
-    for arquivo in lista_csv:
+    for arquivo in lista_arquivos:
         arquivo_limpo = arquivo.split(".")[0]
-        data_raw, id_ = arquivo_limpo.split("_")
+        tema, data_raw, id_ = arquivo_limpo.split("_")
         data = data_raw.split("-")
         data_datetime = date(int(data[0]), int(data[1]), int(data[2]))
         try:

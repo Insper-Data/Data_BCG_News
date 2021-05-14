@@ -6,7 +6,7 @@ import pickle as pk
 import ast
 
 # # USUÁRIO
-USUARIO = "MAX"
+USUARIO = "RODRIGO"
 
 # # Lendo arquivo com paths
 path_atual = os.getcwd()
@@ -51,4 +51,4 @@ def save_run_variable(termo_de_busca, func_name, min_df=0.001, max_features=1000
 
     print("Arquivo salvo e processo finalizado.")
 
-save_run_variable(termo_de_busca="Bolsonaro", func_name="var_tfidf", run_id="Bolsonaro_2021-05-10_0.csv")  # # EXEMPLO
+#save_run_variable(termo_de_busca="Bolsonaro", func_name="var_tfidf", run_id="Bolsonaro_2021-05-10_0.csv")  # # EXEMPLO

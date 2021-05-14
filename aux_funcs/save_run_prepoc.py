@@ -8,7 +8,7 @@ import ast
 from tqdm import tqdm
 
 # # USUÁRIO
-USUARIO = "MAX"
+USUARIO = "RODRIGO"
 
 # # Lendo arquivo com paths
 path_atual = os.getcwd()

@@ -6,7 +6,7 @@ from tqdm import tqdm
 import ast
 
 # # USUÁRIO
-USUARIO = "MAX"
+USUARIO = "RODRIGO"
 
 # # Lendo arquivo com paths
 path_atual = os.getcwd()
@@ -16,25 +16,19 @@ ler_arquivo = arquivo_path.read()
 dicionario = ast.literal_eval(ler_arquivo)
 path_drive = dicionario[USUARIO]
 
-path = f"{path_drive}/Preproc/"
-arquivos = os.listdir(path)
-arquivo_mais_recente(arquivos)
-
 # Funções de criação de variáveis
 def var_tfidf (termo_de_busca, min_df, max_features, run_id=""):
-    # Abrindo arquivo
-    path = f"{path_drive}/Preproc/"
-    arquivos = os.listdir(path)
+
+    path_preproc = f"{path_drive}/Preproc"
 
     # Encontrando mais recente
     if run_id == "":
-        arquivo = arquivo_mais_recente(arquivos)
+        arquivo = arquivo_mais_recente(termo_de_busca, USUARIO)
     else:
         arquivo = run_id
 
     # Criando e limpando DF (retirnado linhas de artigos vazios)
-    df = pd.read_csv(f"{path}{arquivo}", index_col=0)
-    df = df[df.termo_de_busca == termo_de_busca.capitalize()]
+    df = pd.read_csv(f"{path_preproc}/{arquivo}", index_col=0)
     if df.empty:
         return "O termo buscado não está na nossa base de dados"
     df.dropna(subset=['artigo'], inplace=True)
@@ -68,8 +62,5 @@ def var_tfidf (termo_de_busca, min_df, max_features, run_id=""):
 
     print("Criação de variáveis por TF-IDF finalizada")
     return df10, df90
-arquivos = os.listdir(path)
-arquivos
-arquivo_mais_recente(arquivos)
 
 # # var_tfidf("Bolsonaro", min_df=0.001, max_features=1000) # # Exemplo

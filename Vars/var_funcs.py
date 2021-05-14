@@ -44,11 +44,11 @@ def var_tfidf (termo_de_busca, path_drive, min_df, max_features, run_id):
     df_final = pd.concat([df, df_tfidf], axis=1)
 
     print("Limpando DF final")
-    df_final.drop(["sigla","nome_jornal","termo_de_busca","data","manchete", "artigo"], axis=1, inplace=True)
+    df_final.drop(["nome_jornal","termo_de_busca","manchete", "artigo"], axis=1, inplace=True)
 
     print("Dividindo DF final em 10/90")
-    df10 = df.sample(frac=0.1)
-    df90 = df.drop(df10.index)
+    df10 = df_final.sample(frac=0.1)
+    df90 = df_final.drop(df10.index)
 
     print("Criação de variáveis por TF-IDF finalizada")
     return df10, df90

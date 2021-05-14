@@ -134,3 +134,4 @@ dmypy.json
 
 # Set_path
 ./aux_funcs/set_path.py
+set_path.py

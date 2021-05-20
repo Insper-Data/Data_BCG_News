@@ -51,7 +51,10 @@ class Zeus:
         self.porcentagem_para_criacao_de_amostras = ''
         self.df_cluster = ''
         self.clusters = ''
+        self.var_teste_original = ''
         self.pega_variaveis()
+        self.agregado = ''
+        self.df_agregado = ''
 
     def pega_path_user(self):
         """
@@ -336,7 +339,7 @@ class Zeus:
         self.train.reset_index(drop=True)
 
         colunas_pro_drop = ['unique_identifier', 'sigla', 'data']
-
+        self.var_teste_original = self.var_teste
         self.var_teste = self.var_teste.drop(columns=colunas_pro_drop)
         self.train = self.train.drop(columns=['sigla', 'data'])
         self.var_teste.reset_index(drop=True)
@@ -394,6 +397,7 @@ class Zeus:
             self.var_teste[self.col_lists[0]])
         self.resultado = self.previsão
         self.var_teste['label'] = self.resultado
+        self.faz_agregacao()
 
         print('FREQUENCIA CLUSTER')
         print(self.df_cluster.Label.value_counts(sort=False))
@@ -409,7 +413,7 @@ class Zeus:
                 columns=['label']).sum(axis=0).nlargest(
                 numero).values.tolist()})
 
-            fig = px.bar(df_data, x='word', y='value', color='value')
+            fig = px.bar(df_data, x='word', y='value', color='value', color_continuous_scale='Blues')
             fig.show()
 
     def salva_parametros(self):
@@ -431,3 +435,8 @@ class Zeus:
         file = open(
             f"../Spine/{self.user}_model_documentation_{self.data}", "wb")
         pickle.dump(informações, file)
+
+    def faz_agregacao(self):
+        self.var_teste_original['label'] = self.var_teste['label']
+        self.agregado = self.var_teste_original[['unique_identifier', 'sigla', 'data', 'label']]
+        self.df_agregado = pd.crosstab(self.agregado.sigla, self.agregado.label)

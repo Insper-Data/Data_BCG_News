@@ -56,7 +56,7 @@ def stem_and_lemmatize(text):
     stem_text = [pt_stemmer.stem(word) for word in word_tokenize(text)]
     lematizze_text = [pt_lematizer.lemmatize(word) for word in stem_text]
 
-    return " ".join(lematizze_text)
+    return "".join(lematizze_text)
 
 
 def clean_text_func(text):

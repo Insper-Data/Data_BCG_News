@@ -3,7 +3,17 @@ import pandas as pd
 from Vars.var_funcs import *
 from os import path
 import pickle as pk
-from aux_funcs.set_path import path_drive
+import ast
+
+# # USUÁRIO
+USUARIO = "RODRIGO"
+
+# # Lendo arquivo com paths
+path_atual = os.getcwd()
+arquivo_path = open('set_path.py', 'r')
+ler_arquivo = arquivo_path.read()
+dicionario = ast.literal_eval(ler_arquivo)
+path_drive = dicionario[USUARIO]
 
 
 def save_run_variable(termo_de_busca, func_name, min_df=0.001, max_features=10000, run_id=""):
@@ -15,7 +25,7 @@ def save_run_variable(termo_de_busca, func_name, min_df=0.001, max_features=1000
     data = str(date.today())
 
     # Running var function with eval
-    df10,df90 = eval(func_name)(termo_de_busca, path_drive, min_df, max_features, run_id)
+    df10,df90 = eval(func_name)(termo_de_busca, min_df, max_features, run_id)
 
     # Pickle with preproc info
     info = {"termo_buscado": termo_de_busca,
@@ -41,4 +51,4 @@ def save_run_variable(termo_de_busca, func_name, min_df=0.001, max_features=1000
 
     print("Arquivo salvo e processo finalizado.")
 
-# # save_run_variable("teste", "2021-03-05_0")  # # EXEMPLO
+#save_run_variable(termo_de_busca="Bolsonaro", func_name="var_tfidf", run_id="Bolsonaro_2021-05-10_0.csv")  # # EXEMPLO

@@ -2,7 +2,17 @@ import pandas as pd
 import pickle
 from datetime import date
 import os
-from aux_funcs.set_path import path_drive
+import ast
+
+# # USUÁRIO
+USUARIO = "MAX"
+
+# # Lendo arquivo com paths
+path_atual = os.getcwd()
+arquivo_path = open('set_path.py', 'r')
+ler_arquivo = arquivo_path.read()
+dicionario = ast.literal_eval(ler_arquivo)
+path_drive = dicionario[USUARIO]
 
 
 def save_run_spine(run_id_list, pct_train=0.1):

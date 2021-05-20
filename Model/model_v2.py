@@ -437,6 +437,7 @@ class Zeus:
         pickle.dump(informações, file)
 
     def faz_agregacao(self):
+        # Agrega os resultados
         self.var_teste_original['label'] = self.var_teste['label']
         self.agregado = self.var_teste_original[['unique_identifier', 'sigla', 'data', 'label']]
         self.df_agregado = pd.crosstab(self.agregado.sigla, self.agregado.label)

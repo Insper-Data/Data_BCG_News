@@ -61,6 +61,8 @@ class Zeus:
         Metodo que pega o path de acordo com o usuario que inicializou a class
         """
         path_atual = os.getcwd()
+        os.chdir(os.path.dirname(path_atual))
+
         if self.user == 'WILGNER':
             path_aux_funcs = path_atual.replace('Model', r'aux_funcs\\')
         else:
@@ -68,20 +70,21 @@ class Zeus:
 
         os.chdir(os.path.dirname(path_aux_funcs))
 
-        arquivo_path = open('set_path.py', 'r')
-        ler_arquivo = arquivo_path.read()
-        dicionario = ast.literal_eval(ler_arquivo)
+        with open('set_path.py', 'r') as arquivo_path:
+            ler_arquivo = arquivo_path.read()
+            dicionario = ast.literal_eval(ler_arquivo)
 
-        lista_users = list(dicionario.keys())
+            lista_users = list(dicionario.keys())
 
-        if self.user in lista_users:
-            print('USUARIO VALIDO !')
-            self.path_user = dicionario[self.user]
-        else:
-            raise TypeError(
-                'O USUARIO SELECIONADO NÃO TEM UM ENDEREÇO VALIDO CADASTRADO')
+            if self.user in lista_users:
+                print('USUARIO VALIDO !')
+                self.path_user = dicionario[self.user]
+            else:
+                raise TypeError(
+                    'O USUARIO SELECIONADO NÃO TEM UM ENDEREÇO VALIDO CADASTRADO')
 
-        arquivo_path.close()
+
+        #arquivo_path.close()
 
     def valida_acesso_path_user(self):
         self.pega_path_user()
@@ -441,3 +444,5 @@ class Zeus:
         self.var_teste_original['label'] = self.var_teste['label']
         self.agregado = self.var_teste_original[['unique_identifier', 'sigla', 'data', 'label']]
         self.df_agregado = pd.crosstab(self.agregado.sigla, self.agregado.label)
+
+        return self.df_agregado

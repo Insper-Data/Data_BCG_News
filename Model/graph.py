@@ -129,22 +129,38 @@ class Graficos:
 
         lista_fig = []
         for numero in range(n_cluster):
-            fig = px.choropleth(
-                data_frame=self.df2,
-                locations='Estado',
-                geojson=self.Brazil,
-                color=f'cluster_{numero}',
-                hover_name='Estado',
-                hover_data=[f'cluster_{numero}', "Longitude", "Latitude"],
-                title=f'Estados com mais noticias no cluster {numero}',
-                color_continuous_scale=self.colors[numero]
-            )
-            fig.update_geos(fitbounds="locations", visible=False)
+            try:
+                fig = px.choropleth(
+                    data_frame=self.df2,
+                    locations='Estado',
+                    geojson=self.Brazil,
+                    color=f'cluster_{numero}',
+                    hover_name='Estado',
+                    hover_data=[f'cluster_{numero}', "Longitude", "Latitude"],
+                    title=f'Estados com mais noticias no cluster {numero}',
+                    color_continuous_scale=self.colors[numero]
+                )
+                fig.update_geos(fitbounds="locations", visible=False)
 
-            lista_fig.append(fig)
+                lista_fig.append(fig)
+            except:
+                lista_fig.append('')
         return lista_fig
 
-    def plota_grafico_1(self, n_cluster):
-        return html.Div(className='menu2', children=[
-            dcc.Graph(id=f'graph_{n_cluster}', figure=self.constroi_grafico_1(n_cluster))
-        ])
+    def constroi_grafico_2(self, numero2, n_cluster):
+        lista_fig = []
+        for numero in range(n_cluster):
+            try:
+                df_data = pd.DataFrame({'word': self.zeus.var_teste[self.zeus.var_teste.label == 1].drop(
+                    columns=['label']).sum(axis=0).nlargest(numero2).index.tolist(),
+                                        'value': self.zeus.var_teste[self.zeus.var_teste.label == 1].drop(
+                                            columns=['label']).sum(axis=0).nlargest(numero2).values.tolist()})
+                #print(df_data)
+
+                fig = px.bar(df_data, x='word', y='value',title=f"As palavras que mais aparecem no cluster_{numero}", color='value', color_continuous_scale=self.colors[numero])
+                lista_fig.append(fig)
+
+            except:
+                lista_fig.append('')
+
+        return lista_fig

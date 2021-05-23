@@ -124,14 +124,21 @@ def printa_info(n_clicks, input_termo, input_local, data_inicial, data_final):
         numero_de_clusters = graficos.cria_df_pronto()
 
         lista_fig = graficos.constroi_grafico_1(len(numero_de_clusters))
+        lista_fig2 = graficos.constroi_grafico_2(10, len(numero_de_clusters))
 
         lista_html = []
         for index in range(10):
             try:
                 fig = lista_fig[index]
+                fig2 = lista_fig2[index]
 
-                lista_html.append(html.Div(className='menu2', children=[
-                    dcc.Graph(id=f'graph_{index}', figure=fig)
+                lista_html.append(html.Div(children=[
+                    html.Div(className='menu2', children=[
+                        dcc.Graph(id=f'graph_{index}', figure=fig),
+                        dcc.Graph(id=f'graph_{index}', figure=fig2),
+
+                    ]),
+
                 ]))
             except:
                 lista_html.append(html.Div())
@@ -143,4 +150,4 @@ def printa_info(n_clicks, input_termo, input_local, data_inicial, data_final):
 router.register_callbacks()
 
 if __name__ == '__main__':
-    app.run_server(debug=True, dev_tools_hot_reload_interval=100)
+    app.run_server(debug=False, dev_tools_hot_reload_interval=10000, dev_tools_hot_reload_watch_interval=10)

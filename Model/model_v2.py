@@ -60,16 +60,17 @@ class Zeus:
         """
         Metodo que pega o path de acordo com o usuario que inicializou a class
         """
+        os.chdir(os.path.dirname(
+            r'C:\Users\wilgn\Desktop\Faculdade\3° Semestre\Insper Data\Projeto\Git projeto\Data_BCG_News\Model\\'))
         path_atual = os.getcwd()
-        os.chdir(os.path.dirname(path_atual))
-
+        print(os.listdir())
         if self.user == 'WILGNER':
             path_aux_funcs = path_atual.replace('Model', r'aux_funcs\\')
         else:
             path_aux_funcs = path_atual.replace('Model', r'aux_funcs/')
 
         os.chdir(os.path.dirname(path_aux_funcs))
-
+        print(os.listdir())
         with open('set_path.py', 'r') as arquivo_path:
             ler_arquivo = arquivo_path.read()
             dicionario = ast.literal_eval(ler_arquivo)
@@ -84,6 +85,8 @@ class Zeus:
                     'O USUARIO SELECIONADO NÃO TEM UM ENDEREÇO VALIDO CADASTRADO')
 
 
+        os.chdir(os.path.dirname(r'C:\Users\wilgn\Desktop\Faculdade\3° Semestre\Insper Data\Projeto\Git projeto\Data_BCG_News\Model\\'))
+        print(os.listdir())
         #arquivo_path.close()
 
     def valida_acesso_path_user(self):
@@ -443,6 +446,6 @@ class Zeus:
         # Agrega os resultados
         self.var_teste_original['label'] = self.var_teste['label']
         self.agregado = self.var_teste_original[['unique_identifier', 'sigla', 'data', 'label']]
-        self.df_agregado = pd.crosstab(self.agregado.sigla, self.agregado.label)
+        self.df_agregado = pd.crosstab(self.agregado.sigla, self.agregado.label, normalize='index')
 
         return self.df_agregado

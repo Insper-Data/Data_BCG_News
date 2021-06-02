@@ -125,13 +125,14 @@ def printa_info(n_clicks, input_termo, input_local, data_inicial, data_final):
 
         lista_fig = graficos.constroi_grafico_1(len(numero_de_clusters))
         lista_fig2 = graficos.constroi_grafico_2(10, len(numero_de_clusters))
+        #lista_fig3 = graficos.constroi_grafico_3(10, len(numero_de_clusters))
 
         lista_html = []
         for index in range(10):
             try:
                 fig = lista_fig[index]
                 fig2 = lista_fig2[index]
-
+                #fig3 = lista_fig3[index]
                 lista_html.append(html.Div(children=[
                     html.Div(className='menu2', children=[
                         dcc.Graph(id=f'graph_{index}', figure=fig),

@@ -7,8 +7,14 @@ import dash_html_components as html
 import pandas as pd
 import plotly.express as px
 import sys
+from plotly.tools import mpl_to_plotly
 from configs import *
 from model_v2 import *
+
+import pandas as pd
+from wordcloud import WordCloud
+import matplotlib.pyplot as plt
+
 
 
 class Graficos:
@@ -118,7 +124,7 @@ class Graficos:
         map_clusters = {}
         for index, coluna in enumerate(colunas):
             if isinstance(coluna, int):
-                map_clusters[coluna] = f'cluster_{coluna}'
+                map_clusters[coluna] = f'cluster {coluna}'
                 numero_de_clusters.append(index)
 
         self.df2.rename(columns=map_clusters, inplace=True)
@@ -134,14 +140,14 @@ class Graficos:
                     data_frame=self.df2,
                     locations='Estado',
                     geojson=self.Brazil,
-                    color=f'cluster_{numero}',
+                    color=f'cluster {numero}',
                     hover_name='Estado',
-                    hover_data=[f'cluster_{numero}', "Longitude", "Latitude"],
-                    title=f'Estados com mais noticias no cluster {numero}',
+                    hover_data=[f'cluster {numero}', "Longitude", "Latitude"],
                     color_continuous_scale=self.colors[numero]
                 )
                 fig.update_geos(fitbounds="locations", visible=False)
-
+                fig.update_layout(title_text=f"Estados com mais noticias no cluster {numero}", title_x=0.5,
+                                  coloraxis_colorbar_x=-0.15)
                 lista_fig.append(fig)
             except:
                 lista_fig.append('')
@@ -151,15 +157,43 @@ class Graficos:
         lista_fig = []
         for numero in range(n_cluster):
             try:
-                df_data = pd.DataFrame({'word': self.zeus.var_teste[self.zeus.var_teste.label == 1].drop(
+                df_data = pd.DataFrame({'word': self.zeus.var_teste[self.zeus.var_teste.label == numero].drop(
                     columns=['label']).sum(axis=0).nlargest(numero2).index.tolist(),
-                                        'value': self.zeus.var_teste[self.zeus.var_teste.label == 1].drop(
+                                        'value': self.zeus.var_teste[self.zeus.var_teste.label == numero].drop(
                                             columns=['label']).sum(axis=0).nlargest(numero2).values.tolist()})
-                #print(df_data)
 
-                fig = px.bar(df_data, x='word', y='value',title=f"As palavras que mais aparecem no cluster_{numero}", color='value', color_continuous_scale=self.colors[numero])
+                fig = px.bar(df_data, x='word', y='value', color='value', color_continuous_scale=self.colors[numero])
+                fig.update_layout(title_text=f"As palavras que mais aparecem no cluster {numero}", title_x=0.5, template='ggplot2')
+                fig.update_xaxes(showgrid=False)
+                fig.update_yaxes(showgrid=False)
                 lista_fig.append(fig)
 
+            except:
+                lista_fig.append('')
+
+        return lista_fig
+
+    def plot_wordcloud(data):
+        d = {a: x for a, x in data.values}
+        wc = WordCloud()
+        wc.generate_from_frequencies(frequencies=d)
+        return wc
+
+    def constroi_grafico_3(self, numero2, n_cluster):
+        lista_fig = []
+        for numero in range(n_cluster):
+            try:
+                df_data = pd.DataFrame({'word': self.zeus.var_teste[self.zeus.var_teste.label == numero].drop(
+                    columns=['label']).sum(axis=0).nlargest(numero2).index.tolist(),
+                                        'value': self.zeus.var_teste[self.zeus.var_teste.label == numero].drop(
+                                            columns=['label']).sum(axis=0).nlargest(numero2).values.tolist()})
+
+                nuvem = self.plot_wordcloud(df_data)
+                fig = plt.figure(figsize=(10,10))
+                ax = fig.add_axes([0,0,1,1])
+                ax.imshow(nuvem,  interpolation="bilinear")
+                plotly_fig = mpl_to_plotly(fig)
+                lista_fig.append(plotly_fig)
             except:
                 lista_fig.append('')
 

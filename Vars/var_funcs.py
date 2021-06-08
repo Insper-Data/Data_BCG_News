@@ -5,8 +5,9 @@ import os
 from tqdm import tqdm
 import ast
 
+
 # # USUÁRIO
-USUARIO = "RODRIGO"
+USUARIO = "MAX"
 
 # # Lendo arquivo com paths
 path_atual = os.getcwd()

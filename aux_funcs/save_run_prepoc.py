@@ -8,7 +8,7 @@ import ast
 from tqdm import tqdm
 
 # # USUÁRIO
-USUARIO = "RODRIGO"
+USUARIO = "MAX"
 
 # # Lendo arquivo com paths
 path_atual = os.getcwd()
@@ -16,22 +16,31 @@ arquivo_path = open('set_path.py', 'r')
 ler_arquivo = arquivo_path.read()
 dicionario = ast.literal_eval(ler_arquivo)
 path_drive = dicionario[USUARIO]
+path_preproc = f"{path_drive}/Preproc"
 
-def save_run_preproc(tema="", drop_punct=False, strip_accents=False, drop_stopwords=False, stem_and_lem=False, clean_text=True):
+# # Lendo dicionário Léxico
+df_lexicon = pd.read_csv(f"{path_preproc}/Lexicon/oplexicon_v3.csv")
+
+def save_run_preproc(tema="", drop_punct=False, strip_accents=False, drop_stopwords=False, stem_and_lem=False, clean_text=True, polaridade=True):
     df = pd.read_csv(path_drive + "/Raw/Values/index.csv", index_col=0)
     df = df[df['unique_identifier'].str.contains(tema)]
     coluna_run_id = list(df.unique_identifier)
     lista_artigo_limpo = []
+    lista_artigo_original = []
+    lista_polaridade = []
     for index_run_id in tqdm(range(len(coluna_run_id))):
         text_file = f'{path_drive}/Raw/data/{coluna_run_id[index_run_id]}.txt'
         with open(text_file, 'r') as text:
             texto = text.read()
         if len(texto) < 4:
             lista_artigo_limpo.append(nan)
+            lista_artigo_original.append(nan)
         elif bool(re.search(tema, texto)) == False:
             lista_artigo_limpo.append(nan)
+            lista_artigo_original.append(nan)
         else:
             try:
+                lista_artigo_original.append(texto)
                 if drop_punct:
                     texto = remove_punctuation(texto)
                 if strip_accents:  # NÃO PODE SER ELIF PQ PRECISA CHECAR TODAS AS CONDIÇÕES!!!
@@ -47,8 +56,14 @@ def save_run_preproc(tema="", drop_punct=False, strip_accents=False, drop_stopwo
                 print('HOUVE UM ERRO DURANTE O PRÉ-PROCESSAMENTO')
 
     df['artigo'] = lista_artigo_limpo
+    df["artigo_original"] = lista_artigo_original
     data_do_dia = str(date.today())
     df = df.dropna()
+
+    if polaridade:
+        for texto in df["artigo_original"]:
+            lista_polaridade.append(get_polarity(texto))
+        df["sentimento"] = lista_polaridade
 
     # Checando se arquivo já existe para determinar o run id
     for i in range(0, 1000):

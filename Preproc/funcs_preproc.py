@@ -96,7 +96,10 @@ def get_polarity(texto):
         except KeyError:
             polarity.append(0)
             errors += 1
-    mean_polarity = sum(polarity)/(len(polarity)-errors)
+    try:
+        mean_polarity = sum(polarity)/(len(polarity)-errors)
+    except:
+        mean_polarity = 0
     return mean_polarity
 
 

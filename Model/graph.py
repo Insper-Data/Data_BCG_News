@@ -13,8 +13,9 @@ from model_v2 import *
 
 import pandas as pd
 from wordcloud import WordCloud
+from io import BytesIO
+import base64
 import matplotlib.pyplot as plt
-
 
 
 class Graficos:
@@ -51,8 +52,9 @@ class Graficos:
         self.df_aux = ''
         self.df = ''
         self.df2 = ''
-        self.colors = ['Blues', 'BuGn', 'BuPu', 'Purples', 'PuRd', 'GnBu', 'Blues', 'BuGn', 'BuPu', 'Purples', 'PuRd',
-                       'GnBu']
+        self.colors = ['Tealgrn', 'dense', 'algae', 'Aggrnyl', 'Teal', 'Agsunset', 'Tealgrn', 'dense', 'algae',
+                       'Aggrnyl',
+                       'Teal', 'Agsunset']
         self.zeus = ''
 
     def pega_conteudo_auxilar(self):
@@ -145,9 +147,11 @@ class Graficos:
                     hover_data=[f'cluster {numero}', "Longitude", "Latitude"],
                     color_continuous_scale=self.colors[numero]
                 )
+                fig.update(layout_coloraxis_showscale=False)
                 fig.update_geos(fitbounds="locations", visible=False)
-                fig.update_layout(title_text=f"Estados com mais noticias no cluster {numero}", title_x=0.5,
-                                  coloraxis_colorbar_x=-0.15)
+                fig.update_layout(title_text=f"<b>Estados com mais noticias no cluster {numero}<b>", title_x=0.5,
+                                  )
+
                 lista_fig.append(fig)
             except:
                 lista_fig.append('')
@@ -162,8 +166,11 @@ class Graficos:
                                         'value': self.zeus.var_teste[self.zeus.var_teste.label == numero].drop(
                                             columns=['label']).sum(axis=0).nlargest(numero2).values.tolist()})
 
-                fig = px.bar(df_data, x='word', y='value', color='value', color_continuous_scale=self.colors[numero])
-                fig.update_layout(title_text=f"As palavras que mais aparecem no cluster {numero}", title_x=0.5, template='ggplot2')
+                fig = px.bar(df_data, x='word', y='value', color_discrete_sequence=px.colors.qualitative.G10)
+                fig.update(layout_coloraxis_showscale=False)
+                fig.update_layout(title_text=f"<b>As palavras que mais aparecem no cluster {numero}<b>", title_x=0.5,
+                                  template='simple_white')
+
                 fig.update_xaxes(showgrid=False)
                 fig.update_yaxes(showgrid=False)
                 lista_fig.append(fig)
@@ -175,26 +182,25 @@ class Graficos:
 
     def plot_wordcloud(data):
         d = {a: x for a, x in data.values}
-        wc = WordCloud()
-        wc.generate_from_frequencies(frequencies=d)
-        return wc
+        wc = WordCloud(background_color='black', width=480, height=360)
+        wc.fit_words(d)
+        return wc.to_image()
 
     def constroi_grafico_3(self, numero2, n_cluster):
         lista_fig = []
         for numero in range(n_cluster):
-            try:
-                df_data = pd.DataFrame({'word': self.zeus.var_teste[self.zeus.var_teste.label == numero].drop(
-                    columns=['label']).sum(axis=0).nlargest(numero2).index.tolist(),
-                                        'value': self.zeus.var_teste[self.zeus.var_teste.label == numero].drop(
-                                            columns=['label']).sum(axis=0).nlargest(numero2).values.tolist()})
+            #try:
+            df_data = pd.DataFrame({'word': self.zeus.var_teste[self.zeus.var_teste.label == numero].drop(
+                columns=['label']).sum(axis=0).nlargest(numero2).index.tolist(),
+                                    'value': self.zeus.var_teste[self.zeus.var_teste.label == numero].drop(
+                                        columns=['label']).sum(axis=0).nlargest(numero2).values.tolist()})
+            print(df_data.values)
+            img = BytesIO()
+            self.plot_wordcloud(data=df_data).save(img, format='PNG')
 
-                nuvem = self.plot_wordcloud(df_data)
-                fig = plt.figure(figsize=(10,10))
-                ax = fig.add_axes([0,0,1,1])
-                ax.imshow(nuvem,  interpolation="bilinear")
-                plotly_fig = mpl_to_plotly(fig)
-                lista_fig.append(plotly_fig)
-            except:
-                lista_fig.append('')
+            lista_fig.append('data:image/png;base64,{}'.format(base64.b64encode(img.getvalue()).decode()))
+            # except:
+            #    print('DEU ERRO')
+            #    lista_fig.append('')
 
         return lista_fig

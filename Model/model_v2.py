@@ -55,6 +55,7 @@ class Zeus:
         self.pega_variaveis()
         self.agregado = ''
         self.df_agregado = ''
+        self.informacoes = ''
 
     def pega_path_user(self):
         """
@@ -84,10 +85,10 @@ class Zeus:
                 raise TypeError(
                     'O USUARIO SELECIONADO NÃO TEM UM ENDEREÇO VALIDO CADASTRADO')
 
-
-        os.chdir(os.path.dirname(r'C:\Users\wilgn\Desktop\Faculdade\3° Semestre\Insper Data\Projeto\Git projeto\Data_BCG_News\Model\\'))
+        os.chdir(os.path.dirname(
+            r'C:\Users\wilgn\Desktop\Faculdade\3° Semestre\Insper Data\Projeto\Git projeto\Data_BCG_News\Model\\'))
         print(os.listdir())
-        #arquivo_path.close()
+        # arquivo_path.close()
 
     def valida_acesso_path_user(self):
         self.pega_path_user()
@@ -164,7 +165,7 @@ class Zeus:
         if self.data_active and self.data_local:
             self.var_treino = self.var_treino[self.filtro]
             self.var_treino = self.var_treino[(self.var_treino.data > self.data_start) & (
-                self.var_treino.data < self.data_end)]
+                    self.var_treino.data < self.data_end)]
         elif self.data_active and not self.data_local:
             self.var_treino = self.var_treino[
                 (self.var_treino.data > self.data_start) & (self.var_treino.data < self.data_end)]
@@ -196,7 +197,7 @@ class Zeus:
             unique_identifier = self.var_treino['unique_identifier']
             df_com_drop = self.var_treino.drop(columns=colunas_pro_drop)
             df_com_colunas_sorteadas = df_com_drop.sample(
-                frac=porcentagem_para_criacao, replace=True, axis=1)
+                frac=porcentagem_para_criacao, replace=True, random_state=self.random_state, axis=1)
             amostra = pd.concat(
                 [unique_identifier, df_com_colunas_sorteadas], axis=1)
             amostra_sintetica = pd.DataFrame()
@@ -252,7 +253,7 @@ class Zeus:
             col_lists += [self.use_cols]
             model_list += [{'type': 'LGBM',
                             'params': {'num_leaves': 25, 'n_estimators': 300, 'boosting_type': 'rf',
-                                       'bagging_fraction': .8, 'bagging_freq': 1}}]
+                                       'bagging_fraction': .8, 'bagging_freq': 1, 'random_state': self.random_state}}]
 
         # Treinando modelo
         for (model, x, y, cols) in zip(model_list, x_list, y_list, col_lists):
@@ -270,7 +271,7 @@ class Zeus:
     def coleta_folhas(self, porcentagem_do_sample=0.1):
 
         self.df_random = self.var_treino.sample(
-            frac=porcentagem_do_sample, replace=True, axis=0).copy()
+            frac=porcentagem_do_sample, replace=True, random_state=self.random_state, axis=0).copy()
         print(self.df_random.shape)
         # frame_list = []
         model_c = 0
@@ -386,7 +387,7 @@ class Zeus:
         self.col_lists += [self.use_cols]
         model_list += [{'type': 'LGBM',
                         'params': {'num_leaves': 30, 'n_estimators': 500, 'boosting_type': 'rf',
-                                   'bagging_fraction': .8, 'bagging_freq': 1}}]
+                                   'bagging_fraction': .8, 'bagging_freq': 1, 'random_state': self.random_state}}]
 
         for (model, x, y, cols) in zip(model_list, self.x_list, self.y_list, self.col_lists):
             X = x[cols]
@@ -415,15 +416,15 @@ class Zeus:
         for i in range(len(self.var_teste.label.unique())):
             df_data = pd.DataFrame({'word': self.var_teste[self.var_teste.label == i].drop(
                 columns=['label']).sum(axis=0).nlargest(numero).index.tolist(),
-                'value': self.var_teste[self.var_teste.label == i].drop(
-                columns=['label']).sum(axis=0).nlargest(
-                numero).values.tolist()})
+                                    'value': self.var_teste[self.var_teste.label == i].drop(
+                                        columns=['label']).sum(axis=0).nlargest(
+                                        numero).values.tolist()})
 
             fig = px.bar(df_data, x='word', y='value', color='value', color_continuous_scale='Blues')
             fig.show()
 
     def salva_parametros(self):
-        informações = {
+        self.informacoes = {
             'user': self.user,
             'data': self.data,
             'run_id_treino': self.treino_id,
@@ -437,10 +438,6 @@ class Zeus:
             'porcentagem_para_matriz': self.porcentagem_para_matriz
 
         }
-
-        file = open(
-            f"../Spine/{self.user}_model_documentation_{self.data}", "wb")
-        pickle.dump(informações, file)
 
     def faz_agregacao(self):
         # Agrega os resultados

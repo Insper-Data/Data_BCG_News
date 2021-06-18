@@ -180,9 +180,10 @@ class Graficos:
 
         return lista_fig
 
-    def plot_wordcloud(data):
+    def plot_wordcloud(self, data):
+
         d = {a: x for a, x in data.values}
-        wc = WordCloud(background_color='black', width=480, height=360)
+        wc = WordCloud(background_color='white', width=480, height=360)
         wc.fit_words(d)
         return wc.to_image()
 
@@ -194,11 +195,14 @@ class Graficos:
                 columns=['label']).sum(axis=0).nlargest(numero2).index.tolist(),
                                     'value': self.zeus.var_teste[self.zeus.var_teste.label == numero].drop(
                                         columns=['label']).sum(axis=0).nlargest(numero2).values.tolist()})
-            print(df_data.values)
+            print(df_data)
+
             img = BytesIO()
-            self.plot_wordcloud(data=df_data).save(img, format='PNG')
+            imagem_wc = self.plot_wordcloud(df_data)
+            imagem_wc.save(img, format='PNG')
 
             lista_fig.append('data:image/png;base64,{}'.format(base64.b64encode(img.getvalue()).decode()))
+            print('FOI FEITO')
             # except:
             #    print('DEU ERRO')
             #    lista_fig.append('')

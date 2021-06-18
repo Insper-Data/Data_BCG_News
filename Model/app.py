@@ -129,7 +129,7 @@ def printa_info(n_clicks, input_termo, input_local, data_inicial, data_final):
         lista_fig = graficos.constroi_grafico_1(len(numero_de_clusters))
         lista_fig2 = graficos.constroi_grafico_2(10, len(numero_de_clusters))
 
-        lista_fig3 = graficos.constroi_grafico_3(10, len(numero_de_clusters))
+        lista_fig3 = graficos.constroi_grafico_3(25, len(numero_de_clusters))
 
 
         lista_html = []

@@ -6,7 +6,6 @@ from dash_callback_conglomerate import Router
 from components.components import Dashboard
 from graph import Graficos
 
-
 # external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 external_stylesheets = external_stylesheets = [
     {
@@ -17,7 +16,8 @@ external_stylesheets = external_stylesheets = [
 ]
 
 app = dash.Dash(__name__, prevent_initial_callbacks=False)
-router = Router(app, True)
+
+#router = Router(app, True)
 
 # default values -> Roda offline
 app.css.config.serve_locally = True
@@ -56,61 +56,20 @@ app.layout = html.Div(id='main',
                           html.Div(className='run-button', children=[
                               componentes.cria_botao()
                           ]),
-                          html.Div(className='container-main', children=[
-
-                              html.Div(id='graficos', children=[
-
-                              ]),
-                              html.Div(id='graficos1', children=[
-
-                              ]),
-                              html.Div(id='graficos2', children=[
-
-                              ]),
-                              html.Div(id='graficos3', children=[
-
-                              ]),
-                              html.Div(id='graficos4', children=[
-
-                              ]),
-                              html.Div(id='graficos5', children=[
-
-                              ]),
-                              html.Div(id='graficos6', children=[
-
-                              ]),
-                              html.Div(id='graficos7', children=[
-
-                              ]),
-                              html.Div(id='graficos8', children=[
-
-                              ]),
-                              html.Div(id='graficos9', children=[
-
-                              ]),
-                          ]),
-
+                          html.Div(id='container-main2', children=[]),
                       ])
 
 
 ## Callback
-@app.callback([Output(component_id='graficos', component_property='children'),
-               Output(component_id='graficos1', component_property='children'),
-               Output(component_id='graficos2', component_property='children'),
-               Output(component_id='graficos3', component_property='children'),
-               Output(component_id='graficos4', component_property='children'),
-               Output(component_id='graficos5', component_property='children'),
-               Output(component_id='graficos6', component_property='children'),
-               Output(component_id='graficos7', component_property='children'),
-               Output(component_id='graficos8', component_property='children'),
-               Output(component_id='graficos9', component_property='children'),],
-              [Input(component_id='button_run', component_property='n_clicks'),],
+@app.callback([Output(component_id='container-main2', component_property='children')],
+              [Input(component_id='button_run', component_property='n_clicks'), ],
               [State(component_id='termo-filtro', component_property='value'),
                State(component_id='local-filtro', component_property='value'),
                State(component_id='date-range', component_property='start_date'),
-               State(component_id='date-range', component_property='end_date')],
+               State(component_id='date-range', component_property='end_date'),
+               State(component_id='container-main2', component_property='children')],
               )
-def printa_info(n_clicks, input_termo, input_local, data_inicial, data_final):
+def printa_info(n_clicks, input_termo, input_local, data_inicial, data_final, lista_html):
     ctx = dash.callback_context
 
     if not ctx.triggered:
@@ -118,6 +77,8 @@ def printa_info(n_clicks, input_termo, input_local, data_inicial, data_final):
         raise dash.exceptions.PreventUpdate
     else:
         button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+
+    if button_id == 'button_run':
         print(input_termo, input_local, data_inicial, data_final)
 
         graficos.executa_zeus(input_termo)
@@ -130,39 +91,38 @@ def printa_info(n_clicks, input_termo, input_local, data_inicial, data_final):
         lista_fig2 = graficos.constroi_grafico_2(10, len(numero_de_clusters))
 
         lista_fig3 = graficos.constroi_grafico_3(25, len(numero_de_clusters))
-
-
         lista_html = []
-        for index in range(10):
-            try:
-                fig = lista_fig[index]
-                fig2 = lista_fig2[index]
-                fig3 = lista_fig3[index]
-                lista_html.append([
-                    html.Div(className='menu2', children=[
-                        dcc.Graph(id=f'graph_{index}', figure=fig),
+        for index in range(len(lista_fig2)):
+            '''try:'''
+            fig = lista_fig[index]
+            fig2 = lista_fig2[index]
+            fig3 = lista_fig3[index]
+
+            lista_html += [
+                html.Div(className='menu3', children=[
+                    html.Div(id=f'graficos{index}', children=[
+                        html.Div(className='menu2', children=[
+                            dcc.Graph(id=f'graph_{index}', figure=fig),
+                        ]),
+                        html.Div(className='menu2', children=[
+                            dcc.Graph(id=f'graph_{index}', figure=fig2),
+
+                        ]),
+                        html.Div(className='menu2', children=[
+                            html.Img(id=f'graph_{index}', src=fig3),
+                        ]),
                     ]),
-                    html.Div(className='menu2', children=[
-                        dcc.Graph(id=f'graph_{index}', figure=fig2),
-
-                    ]),
-                    html.Div(className='menu2', children=[
-                        html.Img(id=f'graph_{index}', src=fig3),
-
-                    ]),
-
-                ])
-            except:
-                lista_html.append(html.Div())
+                ]),
+            ]
+    print(len(lista_html))
+    return [lista_html]
 
 
+'''            except:
+                lista_html.append(html.Div())'''
 
-    return lista_html[0], lista_html[1], lista_html[2], lista_html[3], lista_html[4], lista_html[5], lista_html[6], \
-           lista_html[7], lista_html[8]
-
-
-router.register_callbacks()
+#router.register_callbacks()
 
 if __name__ == '__main__':
-    app.run_server(debug=False, dev_tools_hot_reload_interval=10000, dev_tools_hot_reload_watch_interval=10)
+    app.run_server(debug=True, dev_tools_hot_reload_interval=10000, dev_tools_hot_reload_watch_interval=10)
     # app.run_server()

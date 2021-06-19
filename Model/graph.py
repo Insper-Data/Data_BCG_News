@@ -55,6 +55,12 @@ class Graficos:
         self.colors = ['Tealgrn', 'dense', 'algae', 'Aggrnyl', 'Teal', 'Agsunset', 'Tealgrn', 'dense', 'algae',
                        'Aggrnyl',
                        'Teal', 'Agsunset']
+        self.rgb_last_continuos_color = {'Tealgrn': 'rgb(37, 125, 152)',
+                                         'dense': 'rgb(54, 14, 36)',
+                                         'algae': 'rgb(17, 36, 20)',
+                                         'Aggrnyl': 'rgb(237, 239, 93)',
+                                         'Teal': 'rgb(42, 86, 116)',
+                                         'Agsunset': 'rgb(237, 217, 163)'}
         self.zeus = ''
 
     def pega_conteudo_auxilar(self):
@@ -165,8 +171,11 @@ class Graficos:
                     columns=['label']).sum(axis=0).nlargest(numero2).index.tolist(),
                                         'value': self.zeus.var_teste[self.zeus.var_teste.label == numero].drop(
                                             columns=['label']).sum(axis=0).nlargest(numero2).values.tolist()})
-
-                fig = px.bar(df_data, x='word', y='value', color_discrete_sequence=px.colors.qualitative.G10)
+                scale = [(self.rgb_last_continuos_color[self.colors[numero]]),
+                         (self.rgb_last_continuos_color[self.colors[numero]])]
+                fig = px.bar(df_data, x='word', y='value', color_continuous_scale=scale,
+                             color='value',
+                             )
                 fig.update(layout_coloraxis_showscale=False)
                 fig.update_layout(title_text=f"<b>As palavras que mais aparecem no cluster {numero}<b>", title_x=0.5,
                                   template='simple_white')
@@ -190,12 +199,12 @@ class Graficos:
     def constroi_grafico_3(self, numero2, n_cluster):
         lista_fig = []
         for numero in range(n_cluster):
-            #try:
+            # try:
             df_data = pd.DataFrame({'word': self.zeus.var_teste[self.zeus.var_teste.label == numero].drop(
                 columns=['label']).sum(axis=0).nlargest(numero2).index.tolist(),
                                     'value': self.zeus.var_teste[self.zeus.var_teste.label == numero].drop(
                                         columns=['label']).sum(axis=0).nlargest(numero2).values.tolist()})
-            print(df_data)
+            # print(df_data)
 
             img = BytesIO()
             imagem_wc = self.plot_wordcloud(df_data)

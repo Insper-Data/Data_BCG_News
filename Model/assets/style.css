@@ -63,6 +63,7 @@ body {
     display:flex;
     justify-content:center;
     margin-top:50px;
+    margin-bottom:50px;
 }
 
 .button{
@@ -83,15 +84,12 @@ body {
   color: white;
 }
 
-.container-main{
 
-}
-
-#graficos, #graficos1, #graficos2, #graficos3, #graficos4, #graficos5, #graficos6, #graficos7{
+#graficos0, #graficos1, #graficos2, #graficos3, #graficos4, #graficos5, #graficos6, #graficos7{
 
     display: flex;
     flex-flow:wrap;
-    justify-content:center;
+    justify-content:space-around;
     margin:1rem;
 
 }
@@ -104,6 +102,15 @@ body {
     margin: 1rem 1rem;
     background-color: #FFFFFF;
     box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.18);
+}
+
+.menu3 {
+
+    padding: 2rem;
+    margin: 1rem 1rem;
+    background-color: #FFF;
+    box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.38);
+    border-radius:20px;
 }
 
 

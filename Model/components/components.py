@@ -104,7 +104,7 @@ class Dashboard:
                                    start_date_placeholder_text="Data Inicial",
                                    end_date_placeholder_text="Data Final",
                                    calendar_orientation='vertical',
-                                   start_date=date(2019,1,1),
+                                   start_date=date(2020,1,1),
                                    end_date=date(2021,1,1)
 
                                    )

@@ -56,6 +56,8 @@ class Zeus:
         self.agregado = ''
         self.df_agregado = ''
         self.informacoes = ''
+        self.sentimento = ''
+        self.data_df = ''
 
     def pega_path_user(self):
         """
@@ -192,7 +194,7 @@ class Zeus:
         bases_sinteticas = []
         self.numero_de_amostras_sinteticas_para_criar = numero_de_amostras
         self.porcentagem_para_criacao_de_amostras = porcentagem_para_criacao
-        colunas_pro_drop = ['unique_identifier', 'sigla', 'data']
+        colunas_pro_drop = ['unique_identifier', 'sigla', 'data', 'sentimento']
         for i in range(numero_de_amostras):
             unique_identifier = self.var_treino['unique_identifier']
             df_com_drop = self.var_treino.drop(columns=colunas_pro_drop)
@@ -345,10 +347,12 @@ class Zeus:
         self.train['label'] = self.df_cluster.Label.values.tolist()
         self.train.reset_index(drop=True)
 
-        colunas_pro_drop = ['unique_identifier', 'sigla', 'data']
+        colunas_pro_drop = ['unique_identifier', 'sigla', 'data', 'sentimento', 'artigo_original']
         self.var_teste_original = self.var_teste
+        self.sentimento = self.var_teste_original['sentimento']
+        self.data_df = self.var_teste_original['data']
         self.var_teste = self.var_teste.drop(columns=colunas_pro_drop)
-        self.train = self.train.drop(columns=['sigla', 'data'])
+        self.train = self.train.drop(columns=['sigla', 'data', 'sentimento', 'artigo_original'])
         self.var_teste.reset_index(drop=True)
         self.train.reset_index(drop=True)
 
@@ -404,6 +408,7 @@ class Zeus:
             self.var_teste[self.col_lists[0]])
         self.resultado = self.previsão
         self.var_teste['label'] = self.resultado
+
         self.faz_agregacao()
 
         print('FREQUENCIA CLUSTER')
@@ -411,6 +416,8 @@ class Zeus:
         print('********************')
         print('FREQUENCIA CLASSIFICADO')
         print(self.var_teste.label.value_counts(sort=False))
+
+
 
     def plota_palavras_maiores(self, numero):
         for i in range(len(self.var_teste.label.unique())):

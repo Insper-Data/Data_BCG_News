@@ -192,7 +192,7 @@ class Graficos:
     def plot_wordcloud(self, data):
 
         d = {a: x for a, x in data.values}
-        wc = WordCloud(background_color='white', width=480, height=360)
+        wc = WordCloud(background_color='white', width=700, height=450)
         wc.fit_words(d)
         return wc.to_image()
 
@@ -200,6 +200,7 @@ class Graficos:
         lista_fig = []
         for numero in range(n_cluster):
             # try:
+
             df_data = pd.DataFrame({'word': self.zeus.var_teste[self.zeus.var_teste.label == numero].drop(
                 columns=['label']).sum(axis=0).nlargest(numero2).index.tolist(),
                                     'value': self.zeus.var_teste[self.zeus.var_teste.label == numero].drop(
@@ -215,5 +216,33 @@ class Graficos:
             # except:
             #    print('DEU ERRO')
             #    lista_fig.append('')
+
+        return lista_fig
+
+    def constroi_grafico_4(self, n_cluster):
+
+        lista_fig = []
+        df_work = self.zeus.var_teste.copy()
+        df_work['sentimento'] = self.zeus.sentimento
+        df_work['data'] = self.zeus.data_df
+
+        for numero in range(n_cluster):
+            df_data = df_work[df_work.label == numero]
+            df_data.data = pd.to_datetime(df_data.data)
+            df_data.sort_values(by='data', inplace=True)
+            date_buttons = [
+                {'count': 1, 'step': 'month', 'stepmode': 'todate', 'label': '1MTD'},
+                {'count': 3, 'step': 'month', 'stepmode': 'todate', 'label': '3MTD'},
+                {'count': 6, 'step': 'month', 'stepmode': 'todate', 'label': '6MTD'},
+                {'count': 1, 'step': 'year', 'stepmode': 'todate', 'label': '1YTD'},
+            ]
+            fig = px.line(df_data, x='data', y='sentimento')
+            fig.update_layout(title_text=f"<b>Sentimento no tempo do cluster {numero}<b>", title_x=0.5,
+                              template='simple_white')
+            fig.update_layout({'xaxis': {'rangeselector': {'buttons': date_buttons}},
+                               'yaxis': {'range': [-1, 1]}})
+            fig.update_traces(line_color=self.rgb_last_continuos_color[self.colors[numero]])
+
+            lista_fig.append(fig)
 
         return lista_fig

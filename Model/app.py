@@ -89,15 +89,15 @@ def printa_info(n_clicks, input_termo, input_local, data_inicial, data_final, li
 
         lista_fig = graficos.constroi_grafico_1(len(numero_de_clusters))
         lista_fig2 = graficos.constroi_grafico_2(10, len(numero_de_clusters))
-
         lista_fig3 = graficos.constroi_grafico_3(25, len(numero_de_clusters))
+        lista_fig4 = graficos.constroi_grafico_4(len(numero_de_clusters))
         lista_html = []
         for index in range(len(lista_fig2)):
             '''try:'''
             fig = lista_fig[index]
             fig2 = lista_fig2[index]
             fig3 = lista_fig3[index]
-
+            fig4 = lista_fig4[index]
             lista_html += [
                 html.Div(className='menu3', children=[
                     html.Div(id=f'graficos{index}', children=[
@@ -110,6 +110,9 @@ def printa_info(n_clicks, input_termo, input_local, data_inicial, data_final, li
                         ]),
                         html.Div(className='menu2', children=[
                             html.Img(id=f'graph_{index}', src=fig3),
+                        ]),
+                        html.Div(className='menu2', children=[
+                            dcc.Graph(id=f'graph_{index}', figure=fig4),
                         ]),
                     ]),
                 ]),
@@ -124,5 +127,5 @@ def printa_info(n_clicks, input_termo, input_local, data_inicial, data_final, li
 #router.register_callbacks()
 
 if __name__ == '__main__':
-    app.run_server(debug=True, dev_tools_hot_reload_interval=10000, dev_tools_hot_reload_watch_interval=10)
+    app.run_server(debug=False, dev_tools_hot_reload_interval=10000, dev_tools_hot_reload_watch_interval=10)
     # app.run_server()

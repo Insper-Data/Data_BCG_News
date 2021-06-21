@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 
 
 class Graficos:
-    def __init__(self):
+    def __init__(self, load = False):
         self.Brazil = ''
         self.state_id_map = {}
         self.dicionario_filtro = {'Acre': 'AC',
@@ -62,6 +62,12 @@ class Graficos:
                                          'Teal': 'rgb(42, 86, 116)',
                                          'Agsunset': 'rgb(237, 217, 163)'}
         self.zeus = ''
+        self.load = load
+        self.df_final = ''
+        self.agregado = ''
+        self.df_agregado = ''
+        self.is_load = False
+        self.df_loaded = False
 
     def pega_conteudo_auxilar(self):
         with urlopen(
@@ -69,10 +75,10 @@ class Graficos:
             self.Brazil = json.load(response)  # Javascrip object notation
         self.df_aux = pd.read_csv('https://raw.githubusercontent.com/nayanemaia/Dataset_Soja/main/soja%20sidra.csv')
 
-    def executa_zeus(self, termo):
+    def executa_zeus(self, termo, usuario):
 
         termo = termo
-        user = USERS['Wilgner']
+        user = USERS[f'{usuario.capitalize()}']
         path_files = constroi_id(termo)
         treino_id = path_files[0]
         teste_id = path_files[1]
@@ -110,6 +116,17 @@ class Graficos:
         self.zeus.classifica_agrupamento()
 
         self.df = self.zeus.faz_agregacao()
+
+    def faz_agregacao(self, df, is_load):
+        # Agrega os resultados
+        self.is_load = is_load
+        self.df_loaded = df.copy()
+
+        self.df_loaded.drop(columns=['unique_identifier', 'sigla'], inplace=True)
+        self.agregado = df[['unique_identifier', 'sigla', 'data', 'label']]
+        self.df_agregado = pd.crosstab(self.agregado.sigla, self.agregado.label, normalize='index')
+
+        self.df = self.df_agregado
 
     def coleta_dados_do_json(self):
         for feature in self.Brazil['features']:
@@ -165,27 +182,53 @@ class Graficos:
 
     def constroi_grafico_2(self, numero2, n_cluster):
         lista_fig = []
+
         for numero in range(n_cluster):
-            try:
-                df_data = pd.DataFrame({'word': self.zeus.var_teste[self.zeus.var_teste.label == numero].drop(
-                    columns=['label']).sum(axis=0).nlargest(numero2).index.tolist(),
-                                        'value': self.zeus.var_teste[self.zeus.var_teste.label == numero].drop(
-                                            columns=['label']).sum(axis=0).nlargest(numero2).values.tolist()})
-                scale = [(self.rgb_last_continuos_color[self.colors[numero]]),
-                         (self.rgb_last_continuos_color[self.colors[numero]])]
-                fig = px.bar(df_data, x='word', y='value', color_continuous_scale=scale,
-                             color='value',
-                             )
-                fig.update(layout_coloraxis_showscale=False)
-                fig.update_layout(title_text=f"<b>As palavras que mais aparecem no cluster {numero}<b>", title_x=0.5,
-                                  template='simple_white')
+            if self.is_load:
+                try:
+                    #print(self.df_loaded.head())
+                    df_data = pd.DataFrame({'word': self.df_loaded[self.df_loaded.label == numero].drop(
+                        columns=['label', 'sentimento']).sum(axis=0).nlargest(numero2).index.tolist(),
+                                            'value': self.df_loaded[self.df_loaded.label == numero].drop(
+                                                columns=['label']).sum(axis=0).nlargest(numero2).values.tolist()})
+                    scale = [(self.rgb_last_continuos_color[self.colors[numero]]),
+                             (self.rgb_last_continuos_color[self.colors[numero]])]
+                    fig = px.bar(df_data, x='word', y='value', color_continuous_scale=scale,
+                                 color='value',
+                                 )
+                    fig.update(layout_coloraxis_showscale=False)
+                    fig.update_layout(title_text=f"<b>As palavras que mais aparecem no cluster {numero}<b>",
+                                      title_x=0.5,
+                                      template='simple_white')
 
-                fig.update_xaxes(showgrid=False)
-                fig.update_yaxes(showgrid=False)
-                lista_fig.append(fig)
+                    fig.update_xaxes(showgrid=False)
+                    fig.update_yaxes(showgrid=False)
+                    lista_fig.append(fig)
 
-            except:
-                lista_fig.append('')
+                except:
+                    lista_fig.append('')
+
+            else:
+                try:
+                    df_data = pd.DataFrame({'word': self.zeus.var_teste[self.zeus.var_teste.label == numero].drop(
+                        columns=['label']).sum(axis=0).nlargest(numero2).index.tolist(),
+                                            'value': self.zeus.var_teste[self.zeus.var_teste.label == numero].drop(
+                                                columns=['label']).sum(axis=0).nlargest(numero2).values.tolist()})
+                    scale = [(self.rgb_last_continuos_color[self.colors[numero]]),
+                             (self.rgb_last_continuos_color[self.colors[numero]])]
+                    fig = px.bar(df_data, x='word', y='value', color_continuous_scale=scale,
+                                 color='value',
+                                 )
+                    fig.update(layout_coloraxis_showscale=False)
+                    fig.update_layout(title_text=f"<b>As palavras que mais aparecem no cluster {numero}<b>", title_x=0.5,
+                                      template='simple_white')
+
+                    fig.update_xaxes(showgrid=False)
+                    fig.update_yaxes(showgrid=False)
+                    lista_fig.append(fig)
+
+                except:
+                    lista_fig.append('')
 
         return lista_fig
 
@@ -198,51 +241,90 @@ class Graficos:
 
     def constroi_grafico_3(self, numero2, n_cluster):
         lista_fig = []
+
         for numero in range(n_cluster):
             # try:
+            if self.is_load:
+                df_data = pd.DataFrame({'word': self.df_loaded[self.df_loaded.label == numero].drop(
+                    columns=['label', 'sentimento']).sum(axis=0).nlargest(numero2).index.tolist(),
+                                        'value': self.df_loaded[self.df_loaded.label == numero].drop(
+                                            columns=['label']).sum(axis=0).nlargest(numero2).values.tolist()})
+                #print(df_data)
+                '''df_data.values = df_data.values.astype(float)
+                df_data.values += +0.001'''
+                img = BytesIO()
+                imagem_wc = self.plot_wordcloud(df_data)
+                imagem_wc.save(img, format='PNG')
 
-            df_data = pd.DataFrame({'word': self.zeus.var_teste[self.zeus.var_teste.label == numero].drop(
-                columns=['label']).sum(axis=0).nlargest(numero2).index.tolist(),
-                                    'value': self.zeus.var_teste[self.zeus.var_teste.label == numero].drop(
-                                        columns=['label']).sum(axis=0).nlargest(numero2).values.tolist()})
-            # print(df_data)
-
-            img = BytesIO()
-            imagem_wc = self.plot_wordcloud(df_data)
-            imagem_wc.save(img, format='PNG')
-
-            lista_fig.append('data:image/png;base64,{}'.format(base64.b64encode(img.getvalue()).decode()))
-            print('FOI FEITO')
+                lista_fig.append('data:image/png;base64,{}'.format(base64.b64encode(img.getvalue()).decode()))
+                print('WC FOI FEITO')
             # except:
             #    print('DEU ERRO')
             #    lista_fig.append('')
+            else:
+                df_data = pd.DataFrame({'word': self.zeus.var_teste[self.zeus.var_teste.label == numero].drop(
+                    columns=['label']).sum(axis=0).nlargest(numero2).index.tolist(),
+                                        'value': self.zeus.var_teste[self.zeus.var_teste.label == numero].drop(
+                                            columns=['label']).sum(axis=0).nlargest(numero2).values.tolist()})
+                #print(df_data)
+                '''df_data.values = df_data.values.astype(float)
+                df_data.values += +0.001'''
+                img = BytesIO()
+                imagem_wc = self.plot_wordcloud(df_data)
+                imagem_wc.save(img, format='PNG')
 
+                lista_fig.append('data:image/png;base64,{}'.format(base64.b64encode(img.getvalue()).decode()))
+                print('WC FOI FEITO')
         return lista_fig
 
     def constroi_grafico_4(self, n_cluster):
-
         lista_fig = []
-        df_work = self.zeus.var_teste.copy()
-        df_work['sentimento'] = self.zeus.sentimento
-        df_work['data'] = self.zeus.data_df
+        if not self.is_load:
 
-        for numero in range(n_cluster):
-            df_data = df_work[df_work.label == numero]
-            df_data.data = pd.to_datetime(df_data.data)
-            df_data.sort_values(by='data', inplace=True)
-            date_buttons = [
-                {'count': 1, 'step': 'month', 'stepmode': 'todate', 'label': '1MTD'},
-                {'count': 3, 'step': 'month', 'stepmode': 'todate', 'label': '3MTD'},
-                {'count': 6, 'step': 'month', 'stepmode': 'todate', 'label': '6MTD'},
-                {'count': 1, 'step': 'year', 'stepmode': 'todate', 'label': '1YTD'},
-            ]
-            fig = px.line(df_data, x='data', y='sentimento')
-            fig.update_layout(title_text=f"<b>Sentimento no tempo do cluster {numero}<b>", title_x=0.5,
-                              template='simple_white')
-            fig.update_layout({'xaxis': {'rangeselector': {'buttons': date_buttons}},
-                               'yaxis': {'range': [-1, 1]}})
-            fig.update_traces(line_color=self.rgb_last_continuos_color[self.colors[numero]])
+            df_work = self.zeus.var_teste.copy()
+            df_work['sentimento'] = self.zeus.sentimento
+            df_work['data'] = self.zeus.data_df
+            self.df_final = df_work
+            self.df_final['unique_identifier'] = self.zeus.var_teste_original['unique_identifier']
+            self.df_final['sigla'] = self.zeus.var_teste_original['sigla']
 
-            lista_fig.append(fig)
+            for numero in range(n_cluster):
+                df_data = df_work[df_work.label == numero]
+                df_data.data = pd.to_datetime(df_data.data)
+                df_data.sort_values(by='data', inplace=True)
+                date_buttons = [
+                    {'count': 1, 'step': 'month', 'stepmode': 'todate', 'label': '1MTD'},
+                    {'count': 3, 'step': 'month', 'stepmode': 'todate', 'label': '3MTD'},
+                    {'count': 6, 'step': 'month', 'stepmode': 'todate', 'label': '6MTD'},
+                    {'count': 1, 'step': 'year', 'stepmode': 'todate', 'label': '1YTD'},
+                ]
+                fig = px.line(df_data, x='data', y='sentimento')
+                fig.update_layout(title_text=f"<b>Sentimento no tempo do cluster {numero}<b>", title_x=0.5,
+                                  template='simple_white')
+                fig.update_layout({'xaxis': {'rangeselector': {'buttons': date_buttons}},
+                                   'yaxis': {'range': [-1, 1]}})
+                fig.update_traces(line_color=self.rgb_last_continuos_color[self.colors[numero]])
+
+                lista_fig.append(fig)
+        else:
+            df_work = self.df_loaded.copy()
+            for numero in range(n_cluster):
+                df_data = df_work[df_work.label == numero]
+                df_data.data = pd.to_datetime(df_data.data)
+                df_data.sort_values(by='data', inplace=True)
+                date_buttons = [
+                    {'count': 1, 'step': 'month', 'stepmode': 'todate', 'label': '1MTD'},
+                    {'count': 3, 'step': 'month', 'stepmode': 'todate', 'label': '3MTD'},
+                    {'count': 6, 'step': 'month', 'stepmode': 'todate', 'label': '6MTD'},
+                    {'count': 1, 'step': 'year', 'stepmode': 'todate', 'label': '1YTD'},
+                ]
+                fig = px.line(df_data, x='data', y='sentimento')
+                fig.update_layout(title_text=f"<b>Sentimento no tempo do cluster {numero}<b>", title_x=0.5,
+                                  template='simple_white')
+                fig.update_layout({'xaxis': {'rangeselector': {'buttons': date_buttons}},
+                                   'yaxis': {'range': [-1, 1]}})
+                fig.update_traces(line_color=self.rgb_last_continuos_color[self.colors[numero]])
+
+                lista_fig.append(fig)
 
         return lista_fig

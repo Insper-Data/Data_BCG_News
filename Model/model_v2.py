@@ -58,6 +58,7 @@ class Zeus:
         self.informacoes = ''
         self.sentimento = ''
         self.data_df = ''
+        self.load_df = ''
 
     def pega_path_user(self):
         """
@@ -66,14 +67,14 @@ class Zeus:
         os.chdir(os.path.dirname(
             r'C:\Users\wilgn\Desktop\Faculdade\3° Semestre\Insper Data\Projeto\Git projeto\Data_BCG_News\Model\\'))
         path_atual = os.getcwd()
-        print(os.listdir())
+        #print(os.listdir())
         if self.user == 'WILGNER':
             path_aux_funcs = path_atual.replace('Model', r'aux_funcs\\')
         else:
             path_aux_funcs = path_atual.replace('Model', r'aux_funcs/')
 
         os.chdir(os.path.dirname(path_aux_funcs))
-        print(os.listdir())
+        #print(os.listdir())
         with open('set_path.py', 'r') as arquivo_path:
             ler_arquivo = arquivo_path.read()
             dicionario = ast.literal_eval(ler_arquivo)
@@ -89,7 +90,7 @@ class Zeus:
 
         os.chdir(os.path.dirname(
             r'C:\Users\wilgn\Desktop\Faculdade\3° Semestre\Insper Data\Projeto\Git projeto\Data_BCG_News\Model\\'))
-        print(os.listdir())
+        #print(os.listdir())
         # arquivo_path.close()
 
     def valida_acesso_path_user(self):
@@ -101,21 +102,25 @@ class Zeus:
         except:
             raise TypeError('IMPOSSIVEL ACESSAR O PATH')
 
-    def pega_variaveis(self, teste=False):
+    def pega_variaveis(self, teste=False, load_df=False, file_name_load=False):
 
         if teste:
             path_name = f'{self.path_user}Variables/{self.term}/{self.test_id}.parquet'
             os.chdir(os.path.dirname(path_name))
-            # print(os.listdir())
-            # print(path_name)
             self.var_teste = pd.read_parquet(os.path.basename(path_name))
+
+        elif load_df:
+
+            path_name = f'{self.path_user}Model/{file_name_load}'
+            os.chdir(os.path.dirname(path_name))
+
+            self.load_df = pd.read_parquet(os.path.basename(path_name))
 
         else:
             self.valida_acesso_path_user()
             path_name = f'{self.path_user}Variables/{self.term}/{self.treino_id}.parquet'
             os.chdir(os.path.dirname(path_name))
-            # print(os.listdir())
-            # print(path_name)
+
             self.var_treino = pd.read_parquet(os.path.basename(path_name))
 
     def seleciona_filtros(self, local=False, data_start=False, data_end=False):
@@ -416,8 +421,6 @@ class Zeus:
         print('********************')
         print('FREQUENCIA CLASSIFICADO')
         print(self.var_teste.label.value_counts(sort=False))
-
-
 
     def plota_palavras_maiores(self, numero):
         for i in range(len(self.var_teste.label.unique())):

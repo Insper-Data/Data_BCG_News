@@ -37,7 +37,9 @@ graficos.prepara_df_aux()
 app.layout = html.Div(id='main',
                       children=[
                           html.Div(className='header', children=[
+                              html.Img(className='logo', src='./assets/logo.png'),
                               componentes.cria_header()
+
                           ]),
                           html.Div(className='menu',
                                    children=[
@@ -69,7 +71,17 @@ def cria_graficos_dinamicos(numero_de_clusters):
     lista_fig2 = graficos.constroi_grafico_2(10, len(numero_de_clusters))
     lista_fig3 = graficos.constroi_grafico_3(25, len(numero_de_clusters))
     lista_fig4 = graficos.constroi_grafico_4(len(numero_de_clusters))
+    fig5 = graficos.constroi_grafico_5()
     lista_html = []
+
+    grafico5 = html.Div(className='menu3', children=[
+        html.Div(className='menu2', children=[
+            dcc.Graph(figure=fig5)
+        ]),
+
+    ])
+    lista_html.append(grafico5)
+
     for index in range(len(lista_fig2)):
         '''try:'''
         fig = lista_fig[index]
@@ -78,7 +90,10 @@ def cria_graficos_dinamicos(numero_de_clusters):
         fig4 = lista_fig4[index]
         lista_html += [
             html.Div(className='menu3', children=[
+                html.Div(className='titulo-cluster',
+                         children=[html.H2(children=f'Cluster {index}')]),
                 html.Div(id=f'graficos{index}', children=[
+
                     html.Div(className='menu2', children=[
                         dcc.Graph(id=f'graph_{index}', figure=fig),
                     ]),
@@ -146,6 +161,7 @@ def printa_info(n_clicks, input_termo, input_local, data_inicial, data_final, li
             lista_html = cria_graficos_dinamicos(numero_de_clusters)
             path_name = f'{graficos.zeus.path_user}Model//'
             os.chdir(os.path.dirname(path_name))
+            print(graficos.df_final)
             graficos.df_final.to_parquet(f'{string_file_name}.parquet')
 
         return [lista_html]
@@ -157,5 +173,5 @@ def printa_info(n_clicks, input_termo, input_local, data_inicial, data_final, li
 # router.register_callbacks()
 
 if __name__ == '__main__':
-    app.run_server(debug=False, dev_tools_hot_reload_interval=10000, dev_tools_hot_reload_watch_interval=10)
+    app.run_server(debug=True, dev_tools_hot_reload_interval=10000, dev_tools_hot_reload_watch_interval=10)
     # app.run_server()

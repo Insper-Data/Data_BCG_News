@@ -1,21 +1,27 @@
 html{
     width: 100%;
     height:100%
+
 }
 
 body {
     font-family: "Barlow Semi Condensed", sans-serif;
     margin: 0;
-    background-color: #F7F7F7;
+    background-color:#E8E8E8;
 
 }
 
 .header{
     display:flex;
     align-items:center;
-    background-color: #3B87BC;
+    background-color: #3478A8;
     height: 288px;
 
+}
+
+.logo{
+    height:10rem;
+    margin-left:3rem;
 }
 
 .titulo{
@@ -24,6 +30,11 @@ body {
     font-weight: bold;
     text-align: center;
     margin: 0 auto;
+}
+
+#main{
+
+
 }
 
 .menu {
@@ -84,7 +95,6 @@ body {
   color: white;
 }
 
-
 #graficos0, #graficos1, #graficos2, #graficos3, #graficos4, #graficos5, #graficos6, #graficos7{
 
     display: flex;
@@ -93,8 +103,6 @@ body {
     margin:1rem;
 
 }
-
-
 
 .menu2 {
 
@@ -107,11 +115,25 @@ body {
 .menu3 {
 
     padding: 2rem;
-    margin: 1rem 1rem;
+    margin: 3rem 10rem;
     background-color: #FFF;
     box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.38);
     border-radius:20px;
 }
+.
+.titulo-cluster{
+
+    height:2rem;
+    padding: 3rem;
+    margin: 3rem 3rem;
+}
+
+h2{
+    font-size:2.5rem;
+    text-align:center;
+}
+
+
 
 
 

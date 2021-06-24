@@ -68,6 +68,7 @@ class Graficos:
         self.df_agregado = ''
         self.is_load = False
         self.df_loaded = False
+        self.df_loadedv2 = False
 
     def pega_conteudo_auxilar(self):
         with urlopen(
@@ -121,7 +122,7 @@ class Graficos:
         # Agrega os resultados
         self.is_load = is_load
         self.df_loaded = df.copy()
-
+        self.df_loadedv2 = df.copy()
         self.df_loaded.drop(columns=['unique_identifier', 'sigla'], inplace=True)
         self.agregado = df[['unique_identifier', 'sigla', 'data', 'label']]
         self.df_agregado = pd.crosstab(self.agregado.sigla, self.agregado.label, normalize='index')
@@ -159,6 +160,7 @@ class Graficos:
     def constroi_grafico_1(self, n_cluster):
 
         lista_fig = []
+        #print(self.df2)
         for numero in range(n_cluster):
             try:
                 fig = px.choropleth(
@@ -250,25 +252,24 @@ class Graficos:
                                         'value': self.df_loaded[self.df_loaded.label == numero].drop(
                                             columns=['label']).sum(axis=0).nlargest(numero2).values.tolist()})
                 #print(df_data)
-                '''df_data.values = df_data.values.astype(float)
-                df_data.values += +0.001'''
+                df_data.value = df_data.value.astype(float)
+                df_data.value += +0.001
                 img = BytesIO()
+
                 imagem_wc = self.plot_wordcloud(df_data)
                 imagem_wc.save(img, format='PNG')
 
                 lista_fig.append('data:image/png;base64,{}'.format(base64.b64encode(img.getvalue()).decode()))
                 print('WC FOI FEITO')
-            # except:
-            #    print('DEU ERRO')
-            #    lista_fig.append('')
+
             else:
                 df_data = pd.DataFrame({'word': self.zeus.var_teste[self.zeus.var_teste.label == numero].drop(
                     columns=['label']).sum(axis=0).nlargest(numero2).index.tolist(),
                                         'value': self.zeus.var_teste[self.zeus.var_teste.label == numero].drop(
                                             columns=['label']).sum(axis=0).nlargest(numero2).values.tolist()})
                 #print(df_data)
-                '''df_data.values = df_data.values.astype(float)
-                df_data.values += +0.001'''
+                df_data.value = df_data.value.astype(float)
+                df_data.value += +0.001
                 img = BytesIO()
                 imagem_wc = self.plot_wordcloud(df_data)
                 imagem_wc.save(img, format='PNG')
@@ -284,10 +285,10 @@ class Graficos:
             df_work = self.zeus.var_teste.copy()
             df_work['sentimento'] = self.zeus.sentimento
             df_work['data'] = self.zeus.data_df
-            self.df_final = df_work
+            self.df_final = df_work.copy()
             self.df_final['unique_identifier'] = self.zeus.var_teste_original['unique_identifier']
             self.df_final['sigla'] = self.zeus.var_teste_original['sigla']
-
+            #print(self.df_final.head())
             for numero in range(n_cluster):
                 df_data = df_work[df_work.label == numero]
                 df_data.data = pd.to_datetime(df_data.data)
@@ -308,6 +309,7 @@ class Graficos:
                 lista_fig.append(fig)
         else:
             df_work = self.df_loaded.copy()
+
             for numero in range(n_cluster):
                 df_data = df_work[df_work.label == numero]
                 df_data.data = pd.to_datetime(df_data.data)
@@ -328,3 +330,49 @@ class Graficos:
                 lista_fig.append(fig)
 
         return lista_fig
+
+    def constroi_grafico_5(self):
+
+        if self.is_load:
+            siglas = self.df_loadedv2.sigla.unique().tolist()
+            df = self.df_loadedv2
+
+        else:
+            siglas = self.df_final.sigla.unique().tolist()
+            df = self.df_final
+
+        df_result = pd.DataFrame(index=siglas)
+        for i in df.label.unique().tolist():
+            x = df[df.label == i]
+            dfx = pd.DataFrame(x.sigla.value_counts().values, columns=[f'Cluster {i}'],
+                               index=x.sigla.unique().tolist())
+            df_result = pd.concat([df_result, dfx], axis=1)
+
+        df_result.fillna(0, inplace=True)
+        df_result['dominante'] = df_result.idxmax(axis=1)
+        print(df_result)
+
+        df_dominante = pd.concat([self.df2, df_result['dominante']], axis=1)
+        df_dominante.fillna('Sem grupo', inplace=True)
+        print(df_dominante)
+
+        colunas = df_result.columns.tolist()
+        del colunas[-1]
+        color_discreate_map = dict(zip(colunas, self.rgb_last_continuos_color.values()))
+        color_discreate_map['Sem grupo'] = 'rgb(235,235,235)'
+        print(color_discreate_map)
+        fig = px.choropleth(
+            data_frame=df_dominante,
+            locations='Estado',
+            geojson=self.Brazil,
+            color='dominante',
+            hover_name='Estado',
+            hover_data=['dominante', "Longitude", "Latitude"],
+            color_discrete_map=color_discreate_map
+        )
+        fig.update(layout_coloraxis_showscale=False)
+        fig.update_geos(fitbounds="locations", visible=False)
+        fig.update_layout(title_text=f"<b>Clusters mais dominantes em cada estado<b>", title_x=0.5,
+                          )
+
+        return fig

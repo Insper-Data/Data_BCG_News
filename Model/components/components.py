@@ -17,7 +17,7 @@ class Dashboard:
                                 {'label': 'Bolsonaro', 'value': 'Bolsonaro'},
                                 {'label': 'Lula', 'value': 'Lula'},
                                 {'label': 'Neymar', 'value': 'Ney'},
-                                {'label': 'Todos', 'value': 'TUDO'}
+
                             ],
 
                             value='TUDO',

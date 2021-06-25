@@ -12,14 +12,14 @@ def extrai_html(url):
     header = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36"}
     req = Request(url, headers = header)
     response = urlopen(req)
-    html = response.read().decode("latin-1")
+    html = response.read().decode("utf-8")
     return html
 
-def scraping_MT_OlharDireto(termo_de_busca):
+def scraping_RJ_DiarioDoRio(termo_de_busca):
     
     ## Definições iniciais
-    jornal = "OlharDireto"
-    estado = "MT"
+    jornal = "DiarioDoRio"
+    estado = "RJ"
     linhas_df = []
     total_noticias = 0
     root_dir = "./Scraping_" + estado + "_" + jornal + "_" + termo_de_busca
@@ -29,43 +29,29 @@ def scraping_MT_OlharDireto(termo_de_busca):
         os.mkdir(txt_dir)
     
     # Ultima página da pesquisa
-    url = "https://olhardireto.com.br/busca/index.asp?busca=" + termo_de_busca
-    soup = BeautifulSoup(extrai_html(url), "lxml", parse_only = SoupStrainer("div", id="paginacao")).findAll("li", class_="numero")[-1]
-    ultima_pagina = int(soup.a.getText())
-    
+    url = f"https://diariodorio.com/?s={termo_de_busca}"
+    soup = BeautifulSoup(extrai_html(url), "lxml", parse_only = SoupStrainer("div", class_="page-nav td-pb-padding-side")).find("a", class_="last")
+    ultima_pagina = int(soup.getText())
+
     ## Lista de links das páginas
     links_noticias = []
     for i in tqdm(range(1, ultima_pagina + 1), desc="Coletando HTMLs das notícias"):
-        url = "https://olhardireto.com.br/busca/index.asp?busca=" + termo_de_busca + "&pagina=" + str(i)
-        noticias = BeautifulSoup(extrai_html(url), "lxml", parse_only = SoupStrainer("ul", class_="lista-noticias"))
-        for noticia in noticias.findAll("li"):
+        url = f"https://diariodorio.com/page/{str(i)}/?s={termo_de_busca}"
+        noticias = BeautifulSoup(extrai_html(url), "lxml", parse_only = SoupStrainer("div", class_="td-ss-main-content"))
+        for noticia in noticias.findAll("h3", class_="entry-title td-module-title"):
             link = noticia.a.get("href")
-            if link[:2] == "..":
-                links_noticias.append("https://olhardireto.com.br" + link[2:])
-            else:
-                links_noticias.append(link)
-
+            links_noticias.append(link)
+    
     for url in tqdm(links_noticias, desc="Notícias coletadas"):
         try:
-            soup = BeautifulSoup(extrai_html(url), "lxml", parse_only = SoupStrainer("div", id="conteudo"))
-            manchete = soup.find("h3", class_="item")
-            data_raw = soup.find("p", class_="datahora").getText().split(" ")[0:3]
-            dic_meses = {"jan":1,
-                         "fev":2,
-                         "mar":3,
-                         "abr":4,
-                         "mai":5,
-                         "jun":6,
-                         "jul":7,
-                         "ago":8,
-                         "set":9,
-                         "out":10,
-                         "nov":11,
-                         "dez":12,}
-            data_raw_2 = [data_raw[2], str(dic_meses[data_raw[1].lower()]), data_raw[0]]
-            data = "-".join(data_raw_2)
-            paragrafos = soup.find("div", class_="html texto").getText()
-            artigo = paragrafos
+            soup = BeautifulSoup(extrai_html(url), "lxml", parse_only = SoupStrainer("div", class_="td-main-content-wrap td-container-wrap"))
+            manchete = soup.find("h1", class_="entry-title").getText()
+            data = soup.find("span", class_="td-post-date").find("time")["datetime"][:10]
+
+            paragrafos = soup.find("div", class_="td-post-content tagdiv-type").findAll("p")
+            artigo = ""
+            for paragrafo in paragrafos:
+                artigo += paragrafo.getText()
 
             unique_identifier = str(total_noticias) + "_" + estado + "_" + jornal + "_" + termo_de_busca.capitalize()
             dic_noticia = {"unique_identifier":unique_identifier,
@@ -87,4 +73,4 @@ def scraping_MT_OlharDireto(termo_de_busca):
     return (f"Scraping finalizado. {total_noticias} notícias coletadas.")
 
 termo_de_busca = input("Qual o termo de busca? \n")
-scraping_MT_OlharDireto(termo_de_busca)
+scraping_RJ_DiarioDoRio(termo_de_busca)

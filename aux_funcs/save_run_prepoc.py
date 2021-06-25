@@ -31,7 +31,7 @@ def save_run_preproc(tema="", drop_punct=False, strip_accents=False, drop_stopwo
     lista_artigo_original = []
     lista_polaridade = []
     dic_stemm = {}
-    for index_run_id in tqdm(range(len(coluna_run_id))):
+    for index_run_id in tqdm(range(len(coluna_run_id)-85000)):
         text_file = f'{path_drive}/Raw/data/{coluna_run_id[index_run_id]}.txt'
         with open(text_file, 'r') as text:
             texto = text.read()
@@ -59,30 +59,33 @@ def save_run_preproc(tema="", drop_punct=False, strip_accents=False, drop_stopwo
                 print('HOUVE UM ERRO DURANTE O PRÉ-PROCESSAMENTO')
 
         # Passando dics parciais de conversão para um dic geral de todos os artigos
-            try:
-                for key, value in dic_stemm_parcial.items():
-                    if key not in dic_stemm.keys():
-                        dic_stemm[key] = value
-                    else:
-                        for k, v in value.items():
-                            if k in dic_stemm[key].keys():
-                                dic_stemm[key][k] += v
-                            else:
-                                dic_stemm[key][k] = 1
+        try:
+            for key, value in dic_stemm_parcial.items():
+                if key not in dic_stemm.keys():
+                    dic_stemm[key] = value
+                else:
+                    for v in value:
+                        dic_stemm[key].append(v)
 
-            except:
-                None
+        except:
+            None
 
-        # Criando dic final de conversao do stemmatize
-        dic_final = {}
+    dic_final = {}
+    for key, value in dic_stemm.items():
+        dic_parcial = {}
+        for v in value:
+            if v in dic_parcial.keys():
+                dic_parcial[key][v] += 1
+            else:
+                dic_parcial[key] = {v: 1}
 
-        for key, value in dic_stemm.items():
-            max_v = 0
-            max_k = ""
-            for k, v in value.items():
-                if v > max_v:
-                    max_k = k
-                    max_v = v
+        max_v = 0
+        max_k = ""
+        for k1, v1 in dic_parcial.items():
+            for k2, v2 in v1.items():
+                if v2 > max_v:
+                    max_v = v2
+                    max_k = k2
 
             dic_final[key] = max_k
 

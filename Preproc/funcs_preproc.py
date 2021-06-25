@@ -89,13 +89,9 @@ def clean_text_func(text):
     dic_palavras = {}
     for i in range(len(stem_text)):
         if stem_text[i] in dic_palavras.keys():
-            if texto_sem_stopword[i] in dic_palavras[stem_text[i]].keys():
-                dic_palavras[stem_text[i]][texto_sem_stopword[i]] += 1
-            else:
-                dic_palavras[stem_text[i]][texto_sem_stopword[i]] = 1
-
+            dic_palavras[stem_text[i]].append(texto_sem_stopword[i])
         else:
-            dic_palavras[stem_text[i]] = {texto_sem_stopword[i]: 1}
+            dic_palavras[stem_text[i]] = [texto_sem_stopword[i]]
 
     lematizze_text = [pt_lematizer.lemmatize(word) for word in stem_text]
 

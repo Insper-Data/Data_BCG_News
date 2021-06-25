@@ -4,7 +4,7 @@ from aux_funcs.save_run_variables import *
 
 # # # # EXEMPLO DE EXECUÇÃO
 # Pre-processing
-save_run_preproc("Bolsonaro")
+save_run_preproc("Lula")
 
 # # # # Variables
 #save_run_variable("Bolsonaro", "var_tfidf", min_df=0.001, max_features=10000)

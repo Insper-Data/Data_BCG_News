@@ -20,7 +20,7 @@ SIGLA = "SC"
 def scrap_sc_ndmais(tema, data_path, values_path):
 
     # #  Descobrindo número de páginas de busca
-    i = 10000  # Número máximo de páginas para pesquisar
+    i = 1000  # Número máximo de páginas para pesquisar
     n_paginas = None
     lista_links = []  # Lista em branco para guardar links das notícias
 
@@ -99,3 +99,5 @@ def scrap_sc_ndmais(tema, data_path, values_path):
         df.to_csv(f"{values_path}/{SIGLA}.csv")
 
     return df
+
+# scrap_sc_ndmais("Neymar", data_path="/Users/maxmitteldorf/Desktop/neymar/data", values_path="/Users/maxmitteldorf/Desktop/neymar/values")

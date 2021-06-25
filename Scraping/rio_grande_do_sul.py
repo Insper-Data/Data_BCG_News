@@ -103,3 +103,5 @@ def scrap_rs_correio_do_povo(tema, data_path, values_path):
         df.to_csv(f"{values_path}/{SIGLA}.csv")
 
     return df
+
+# scrap_rs_correio_do_povo("Neymar", data_path="/Users/maxmitteldorf/Desktop/neymar/data", values_path="/Users/maxmitteldorf/Desktop/neymar/values")

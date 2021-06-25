@@ -91,3 +91,4 @@ def scrap_to_agora_tocantins(tema, data_path, values_path):
     return df
 
 
+# scrap_to_agora_tocantins("Neymar", data_path="/Users/maxmitteldorf/Desktop/neymar/data", values_path="/Users/maxmitteldorf/Desktop/neymar/values")

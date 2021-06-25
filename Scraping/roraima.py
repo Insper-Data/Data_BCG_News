@@ -86,3 +86,5 @@ def scrap_rr_roraima1(tema, data_path, values_path):
         df.to_csv(f"{values_path}/{SIGLA}.csv")
 
     return df
+
+# scrap_rr_roraima1("Neymar", data_path="/Users/maxmitteldorf/Desktop/neymar/data", values_path="/Users/maxmitteldorf/Desktop/neymar/values")

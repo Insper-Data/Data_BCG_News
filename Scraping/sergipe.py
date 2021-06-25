@@ -110,3 +110,5 @@ def scrap_se_a8se(tema, data_path, values_path):
         df.to_csv(f"{values_path}/{SIGLA}.csv")
 
     return df
+
+scrap_se_a8se("Neymar", data_path="/Users/maxmitteldorf/Desktop/neymar/data", values_path="/Users/maxmitteldorf/Desktop/neymar/values")

@@ -103,3 +103,5 @@ def scrap_ro_rondonia_agora(tema, data_path, values_path):
         df.to_csv(f"{values_path}/{SIGLA}.csv")
 
     return df
+
+# scrap_ro_rondonia_agora("Neymar", data_path="/Users/maxmitteldorf/Desktop/neymar/data", values_path="/Users/maxmitteldorf/Desktop/neymar/values")

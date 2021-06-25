@@ -12,7 +12,7 @@ import ssl
 import nltk
 
 # # USUÁRIO
-USUARIO = "MAX"
+USUARIO = "RODRIGO"
 
 # # Desabilitando verificação de ssh  #### Usar isso se o download do nltk data falhar
 # try:
@@ -73,18 +73,33 @@ def stem_and_lemmatize(text):
     stem_text = [pt_stemmer.stem(word) for word in word_tokenize(text)]
     lematizze_text = [pt_lematizer.lemmatize(word) for word in stem_text]
 
-    return "".join(lematizze_text)
+    return " ".join(lematizze_text)
 
 
 def clean_text_func(text):
-    texto_sem_pontuacao = remove_punctuation(text)
+    texto = text.replace("\n", " ")
+    texto_sem_pontuacao = remove_punctuation(texto)
     texto_sem_acento = remove_accents(texto_sem_pontuacao)
     texto_pos_regex = re.sub(
         r"(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)|^rt|http.+?|[0-9.*]", "", texto_sem_acento).strip()
-    texto_sem_stopword = remove_stopwords(texto_pos_regex)
-    texto_stematizado_e_lematizado = stem_and_lemmatize(texto_sem_stopword)
+    texto_sem_stopword = remove_stopwords(texto_pos_regex).split()
 
-    return texto_stematizado_e_lematizado
+    stem_text = [pt_stemmer.stem(word) for word in texto_sem_stopword]
+
+    dic_palavras = {}
+    for i in range(len(stem_text)):
+        if stem_text[i] in dic_palavras.keys():
+            if texto_sem_stopword[i] in dic_palavras[stem_text[i]].keys():
+                dic_palavras[stem_text[i]][texto_sem_stopword[i]] += 1
+            else:
+                dic_palavras[stem_text[i]][texto_sem_stopword[i]] = 1
+
+        else:
+            dic_palavras[stem_text[i]] = {texto_sem_stopword[i]: 1}
+
+    lematizze_text = [pt_lematizer.lemmatize(word) for word in stem_text]
+
+    return (" ".join(lematizze_text), dic_palavras)
 
 def get_polarity(texto):
     polarity = []

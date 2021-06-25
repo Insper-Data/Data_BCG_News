@@ -6,9 +6,10 @@ from os import path
 import os
 import ast
 from tqdm import tqdm
+import pickle as pk
 
 # # USUÁRIO
-USUARIO = "MAX"
+USUARIO = "RODRIGO"
 
 # # Lendo arquivo com paths
 path_atual = os.getcwd()
@@ -24,10 +25,12 @@ df_lexicon = pd.read_csv(f"{path_preproc}/Lexicon/oplexicon_v3.csv")
 def save_run_preproc(tema="", drop_punct=False, strip_accents=False, drop_stopwords=False, stem_and_lem=False, clean_text=True, polaridade=True):
     df = pd.read_csv(path_drive + "/Raw/Values/index.csv", index_col=0)
     df = df[df['unique_identifier'].str.contains(tema)]
+    path_pickle = f'{path_drive}/Preproc/dic_stemm_{tema}.pickle'
     coluna_run_id = list(df.unique_identifier)
     lista_artigo_limpo = []
     lista_artigo_original = []
     lista_polaridade = []
+    dic_stemm = {}
     for index_run_id in tqdm(range(len(coluna_run_id))):
         text_file = f'{path_drive}/Raw/data/{coluna_run_id[index_run_id]}.txt'
         with open(text_file, 'r') as text:
@@ -50,16 +53,60 @@ def save_run_preproc(tema="", drop_punct=False, strip_accents=False, drop_stopwo
                 if stem_and_lem:
                     texto = stem_and_lemmatize(texto)
                 if clean_text:
-                    texto = clean_text_func(texto)
+                    texto, dic_stemm_parcial = clean_text_func(texto)
                 lista_artigo_limpo.append(texto)
             except:
                 print('HOUVE UM ERRO DURANTE O PRÉ-PROCESSAMENTO')
+
+        # Passando dics parciais de conversão para um dic geral de todos os artigos
+            try:
+                for key, value in dic_stemm_parcial.items():
+                    if key not in dic_stemm.keys():
+                        dic_stemm[key] = value
+                    else:
+                        for k, v in value.items():
+                            if k in dic_stemm[key].keys():
+                                dic_stemm[key][k] += v
+                            else:
+                                dic_stemm[key][k] = 1
+
+            except:
+                None
+
+        # Criando dic final de conversao do stemmatize
+        dic_final = {}
+
+        for key, value in dic_stemm.items():
+            max_v = 0
+            max_k = ""
+            for k, v in value.items():
+                if v > max_v:
+                    max_k = k
+                    max_v = v
+
+            dic_final[key] = max_k
+
+        # Adicionando novos valores a um dicionario geral guardado na propria pasta preproc
+        if os.path.isfile(path_pickle):
+            with open(path_pickle, "rb") as file:
+                dic_salvo = pk.load(file)
+                for key, value in dic_final.items():
+                    if key not in dic_salvo:
+                        dic_salvo[key] = value
+
+            with open(path_pickle, "wb") as file:
+                pk.dump(dic_salvo, file)
+
+        else:
+            with open(path_pickle, "wb") as file:
+                pk.dump(dic_final, file)
 
     df['artigo'] = lista_artigo_limpo
     df["artigo_original"] = lista_artigo_original
     data_do_dia = str(date.today())
     df = df.dropna()
 
+    # Verificando a polaridade dos artigos
     if polaridade:
         for texto in df["artigo_original"]:
             lista_polaridade.append(get_polarity(texto))

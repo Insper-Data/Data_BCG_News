@@ -25,7 +25,8 @@ def save_run_variable(termo_de_busca, func_name, min_df=0.001, max_features=1000
     data = str(date.today())
 
     # Running var function with eval
-    df10,df90 = eval(func_name)(termo_de_busca, min_df, max_features, run_id)
+    df10, df90 = eval(func_name)(termo_de_busca, min_df, max_features, run_id)
+
 
     # Pickle with preproc info
     info = {"termo_buscado": termo_de_busca,

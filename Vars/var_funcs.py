@@ -4,10 +4,10 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import os
 from tqdm import tqdm
 import ast
-
+import pickle as pk
 
 # # USUÁRIO
-USUARIO = "MAX"
+USUARIO = "RODRIGO"
 
 # # Lendo arquivo com paths
 path_atual = os.getcwd()
@@ -17,10 +17,15 @@ ler_arquivo = arquivo_path.read()
 dicionario = ast.literal_eval(ler_arquivo)
 path_drive = dicionario[USUARIO]
 
-# Funções de criação de variáveis
-def var_tfidf (termo_de_busca, min_df, max_features, run_id=""):
 
+# Funções de criação de variáveis
+def var_tfidf(termo_de_busca, min_df, max_features, run_id=""):
     path_preproc = f"{path_drive}/Preproc"
+
+    # Abrindo arquivos de reversao do Stemm
+    path_dic = f"{path_drive}/Preproc/dic_stemm_{termo_de_busca.title()}.pickle"
+    with open(path_dic, "rb") as file:
+        dic = pk.load(file)
 
     # Encontrando mais recente
     if run_id == "":
@@ -44,7 +49,7 @@ def var_tfidf (termo_de_busca, min_df, max_features, run_id=""):
     for artigo in df.artigo:
         analyze(artigo)
 
-    print("Criando DataFrame denso")
+    print("Criando DataFrame denso com reversão de stemmatization")
     variaveis = vectorizer.fit_transform(df.artigo)
     df_tfidf = pd.DataFrame(variaveis.todense(), columns=vectorizer.get_feature_names())
 
@@ -55,11 +60,27 @@ def var_tfidf (termo_de_busca, min_df, max_features, run_id=""):
     df_final = pd.concat([df, df_tfidf], axis=1)
 
     print("Limpando DF final")
-    df_final.drop(["nome_jornal","termo_de_busca","manchete", "artigo"], axis=1, inplace=True)
+    df_final.drop(["nome_jornal", "termo_de_busca", "manchete", "artigo"], axis=1, inplace=True)
+
+    print("Revertendo Stemmatize")
+    dic_new_columns = {}
+    columns2drop = []
+    for coluna in df_final.columns:
+        if coluna not in ["sentimento", "sentiment", "data", "dat", "sigla", "sigl", "unique_identifier"]:
+            if coluna in dic.keys():
+                if dic[coluna] in df_final.columns:
+                    columns2drop.append(dic[coluna])
+
+                dic_new_columns[coluna] = dic[coluna]
+
+    df_final.drop(columns2drop, axis=1, inplace=True)
+    df_final = df_final.rename(columns=dic_new_columns)
 
     print("Dividindo DF final em 10/90")
     df10 = df_final.sample(frac=0.1)
     df90 = df_final.drop(df10.index)
+
+    df10.to_csv("df10brabo.csv")
 
     print("Criação de variáveis por TF-IDF finalizada")
     return df10, df90

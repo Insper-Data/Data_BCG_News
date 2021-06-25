@@ -352,7 +352,7 @@ class Graficos:
         df_result = pd.DataFrame(index=siglas)
         for i in df.label.unique().tolist():
             x = df[df.label == i]
-            dfx = pd.DataFrame(x.sigla.value_counts().values, columns=[f'Cluster {i}'],
+            dfx = pd.DataFrame(x.sigla.value_counts(normalize='columns').values, columns=[f'Cluster {i}'],
                                index=x.sigla.unique().tolist())
             df_result = pd.concat([df_result, dfx], axis=1)
 
@@ -403,16 +403,21 @@ class Graficos:
             dfx = df2[df2.label == cluster].copy()
             lista_sentimento_medio.append(dfx.sentimento.mean())
             dfx.drop(columns=['label', 'sentimento'], inplace=True)
+
             filtro = dfx.sum(axis=0) != 0
-            dfz = dfx[dfx.columns[~filtro]]
+            dfz = dfx[dfx.columns[filtro]]
+            print(dfz.shape)
             lista_cluster.append(f'cluster {cluster}')
             lista_variedade_lexical.append(dfz.shape[1])
             lista_numero_de_artigos.append(dfz.shape[0])
+
+
 
         dff = pd.DataFrame({'clusters': lista_cluster,
                             'variedade_lexical': lista_variedade_lexical,
                             'sentimento_medio': np.array(lista_sentimento_medio) * 100,
                             'numero_de_artigos': lista_numero_de_artigos})
+
         fig = px.scatter(data_frame=dff,
                          x='sentimento_medio',
                          y='variedade_lexical',

@@ -175,11 +175,8 @@ def printa_info(n_clicks, input_termo, input_local, data_inicial, data_final, li
         return [lista_html]
 
 
-'''            except:
-                lista_html.append(html.Div())'''
-
 # router.register_callbacks()
 
 if __name__ == '__main__':
-    app.run_server(debug=True, dev_tools_hot_reload_interval=10000, dev_tools_hot_reload_watch_interval=10)
+    app.run_server(debug=False, dev_tools_hot_reload_interval=10000, dev_tools_hot_reload_watch_interval=10)
     # app.run_server()

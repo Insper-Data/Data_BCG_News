@@ -12,7 +12,7 @@ import ssl
 import nltk
 
 # # USUÁRIO
-USUARIO = "RODRIGO"
+USUARIO = "WILGNER"
 
 # # Desabilitando verificação de ssh  #### Usar isso se o download do nltk data falhar
 # try:

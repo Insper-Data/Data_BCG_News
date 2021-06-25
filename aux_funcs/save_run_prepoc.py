@@ -9,7 +9,7 @@ from tqdm import tqdm
 import pickle as pk
 
 # # USUÁRIO
-USUARIO = "RODRIGO"
+USUARIO = "WILGNER"
 
 # # Lendo arquivo com paths
 path_atual = os.getcwd()

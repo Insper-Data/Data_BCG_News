@@ -74,13 +74,12 @@ def var_tfidf(termo_de_busca, min_df, max_features, run_id=""):
                 dic_new_columns[coluna] = dic[coluna]
 
     df_final.drop(columns2drop, axis=1, inplace=True)
+    #df_final.drop([termo_de_busca.lower()], axis=1, inplace=True)
     df_final = df_final.rename(columns=dic_new_columns)
 
     print("Dividindo DF final em 10/90")
     df10 = df_final.sample(frac=0.1)
     df90 = df_final.drop(df10.index)
-
-    df10.to_csv("df10brabo.csv")
 
     print("Criação de variáveis por TF-IDF finalizada")
     return df10, df90

@@ -31,7 +31,8 @@ def save_run_preproc(tema="", drop_punct=False, strip_accents=False, drop_stopwo
     lista_artigo_original = []
     lista_polaridade = []
     dic_stemm = {}
-    for index_run_id in tqdm(range(len(coluna_run_id)-85000)):
+    dic_final = {}
+    for index_run_id in tqdm(range(len(coluna_run_id))):
         text_file = f'{path_drive}/Raw/data/{coluna_run_id[index_run_id]}.txt'
         with open(text_file, 'r') as text:
             texto = text.read()
@@ -58,51 +59,31 @@ def save_run_preproc(tema="", drop_punct=False, strip_accents=False, drop_stopwo
             except:
                 print('HOUVE UM ERRO DURANTE O PRÉ-PROCESSAMENTO')
 
-        # Passando dics parciais de conversão para um dic geral de todos os artigos
-        try:
-            for key, value in dic_stemm_parcial.items():
-                if key not in dic_stemm.keys():
-                    dic_stemm[key] = value
+        for wordStemmatizada, listReverseStemm in dic_stemm_parcial.items():
+            if wordStemmatizada not in dic_stemm.keys():
+                dic_stemm[wordStemmatizada] = {}
+
+            for wordReverseStemm in listReverseStemm:
+                if wordReverseStemm not in dic_stemm[wordStemmatizada].keys():
+                    dic_stemm[wordStemmatizada][wordReverseStemm] = 1
                 else:
-                    for v in value:
-                        dic_stemm[key].append(v)
+                    dic_stemm[wordStemmatizada][wordReverseStemm] += 1
 
-        except:
-            None
 
-    dic_final = {}
-    for key, value in dic_stemm.items():
-        dic_parcial = {}
-        for v in value:
-            if v in dic_parcial.keys():
-                dic_parcial[key][v] += 1
-            else:
-                dic_parcial[key] = {v: 1}
 
+    for w, dicStemm in dic_stemm.items():
         max_v = 0
         max_k = ""
-        for k1, v1 in dic_parcial.items():
-            for k2, v2 in v1.items():
-                if v2 > max_v:
-                    max_v = v2
-                    max_k = k2
+        for stemm, v in dicStemm.items():
+            if v > max_v:
+                max_v = v
+                max_k = stemm
 
-            dic_final[key] = max_k
+        dic_final[w] = max_k
 
-        # Adicionando novos valores a um dicionario geral guardado na propria pasta preproc
-        if os.path.isfile(path_pickle):
-            with open(path_pickle, "rb") as file:
-                dic_salvo = pk.load(file)
-                for key, value in dic_final.items():
-                    if key not in dic_salvo:
-                        dic_salvo[key] = value
-
-            with open(path_pickle, "wb") as file:
-                pk.dump(dic_salvo, file)
-
-        else:
-            with open(path_pickle, "wb") as file:
-                pk.dump(dic_final, file)
+    # Adicionando novos valores a um dicionario geral guardado na propria pasta preproc
+    with open(path_pickle, "wb") as file:
+        pk.dump(dic_final, file)
 
     df['artigo'] = lista_artigo_limpo
     df["artigo_original"] = lista_artigo_original

@@ -33,43 +33,46 @@ def save_run_preproc(tema="", drop_punct=False, strip_accents=False, drop_stopwo
     dic_stemm = {}
     dic_final = {}
     for index_run_id in tqdm(range(len(coluna_run_id))):
-        text_file = os.path.abspath(f'{path_drive}/Raw/data/{coluna_run_id[index_run_id]}.txt')
-        with open(text_file, 'r') as text:
-            texto = text.read()
-        if len(texto) < 4:
+        try:
+            text_file = os.path.abspath(f'{path_drive}/Raw/data/{coluna_run_id[index_run_id]}.txt')
+            with open(text_file, 'r') as text:
+                texto = text.read()
+            if len(texto) < 4:
+                lista_artigo_limpo.append(nan)
+                lista_artigo_original.append(nan)
+            elif bool(re.search(tema, texto)) == False:
+                lista_artigo_limpo.append(nan)
+                lista_artigo_original.append(nan)
+            else:
+                try:
+                    lista_artigo_original.append(texto)
+                    if drop_punct:
+                        texto = remove_punctuation(texto)
+                    if strip_accents:  # NÃO PODE SER ELIF PQ PRECISA CHECAR TODAS AS CONDIÇÕES!!!
+                        texto = remove_accents(texto)
+                    if drop_stopwords:
+                        texto = remove_stopwords(texto)
+                    if stem_and_lem:
+                        texto = stem_and_lemmatize(texto)
+                    if clean_text:
+                        texto, dic_stemm_parcial = clean_text_func(texto)
+                    lista_artigo_limpo.append(texto)
+                except:
+                    print('HOUVE UM ERRO DURANTE O PRÉ-PROCESSAMENTO')
+
+            for wordStemmatizada, listReverseStemm in dic_stemm_parcial.items():
+                if wordStemmatizada not in dic_stemm.keys():
+                    dic_stemm[wordStemmatizada] = {}
+
+                for wordReverseStemm in listReverseStemm:
+                    if wordReverseStemm not in dic_stemm[wordStemmatizada].keys():
+                        dic_stemm[wordStemmatizada][wordReverseStemm] = 1
+                    else:
+                        dic_stemm[wordStemmatizada][wordReverseStemm] += 1
+
+        except:
             lista_artigo_limpo.append(nan)
             lista_artigo_original.append(nan)
-        elif bool(re.search(tema, texto)) == False:
-            lista_artigo_limpo.append(nan)
-            lista_artigo_original.append(nan)
-        else:
-            try:
-                lista_artigo_original.append(texto)
-                if drop_punct:
-                    texto = remove_punctuation(texto)
-                if strip_accents:  # NÃO PODE SER ELIF PQ PRECISA CHECAR TODAS AS CONDIÇÕES!!!
-                    texto = remove_accents(texto)
-                if drop_stopwords:
-                    texto = remove_stopwords(texto)
-                if stem_and_lem:
-                    texto = stem_and_lemmatize(texto)
-                if clean_text:
-                    texto, dic_stemm_parcial = clean_text_func(texto)
-                lista_artigo_limpo.append(texto)
-            except:
-                print('HOUVE UM ERRO DURANTE O PRÉ-PROCESSAMENTO')
-
-        for wordStemmatizada, listReverseStemm in dic_stemm_parcial.items():
-            if wordStemmatizada not in dic_stemm.keys():
-                dic_stemm[wordStemmatizada] = {}
-
-            for wordReverseStemm in listReverseStemm:
-                if wordReverseStemm not in dic_stemm[wordStemmatizada].keys():
-                    dic_stemm[wordStemmatizada][wordReverseStemm] = 1
-                else:
-                    dic_stemm[wordStemmatizada][wordReverseStemm] += 1
-
-
 
     for w, dicStemm in dic_stemm.items():
         max_v = 0

@@ -7,13 +7,14 @@ USERS = {'Wilgner': 'Wilgner',
          'Rodrigo': 'Rodrigo',
          'Max': 'Max'}
 
-NUMERO_DE_AMOSTRAS = 3
-PORCENTAGEM_PARA_CRIACAO = 0.25
-PORCENTAGEM_PARA_SAMPLE = 0.1
+NUMERO_DE_AMOSTRAS = 5
+PORCENTAGEM_PARA_CRIACAO = 0.3
+PORCENTAGEM_PARA_SAMPLE = 0.2
 
 
 def constroi_id(termo):
-    treino_id = f'var_tfidf_{termo}_10_2021-06-20_0'
-    teste_id = f'var_tfidf_{termo}_90_2021-06-20_0'
+
+    treino_id = f'var_tfidf_{termo}_10_2021-06-24_1'
+    teste_id = f'var_tfidf_{termo}_90_2021-06-24_1'
 
     return [treino_id, teste_id]

@@ -199,7 +199,7 @@ class Zeus:
         bases_sinteticas = []
         self.numero_de_amostras_sinteticas_para_criar = numero_de_amostras
         self.porcentagem_para_criacao_de_amostras = porcentagem_para_criacao
-        colunas_pro_drop = ['unique_identifier', 'sigla', 'data', 'sentimento']
+        colunas_pro_drop = ['unique_identifier', 'sigla', 'data']
         for i in range(numero_de_amostras):
             unique_identifier = self.var_treino['unique_identifier']
             df_com_drop = self.var_treino.drop(columns=colunas_pro_drop)
@@ -352,12 +352,12 @@ class Zeus:
         self.train['label'] = self.df_cluster.Label.values.tolist()
         self.train.reset_index(drop=True)
 
-        colunas_pro_drop = ['unique_identifier', 'sigla', 'data', 'sentimento', 'artigo_original']
+        colunas_pro_drop = ['unique_identifier', 'sigla', 'data', 'artigo_original']
         self.var_teste_original = self.var_teste
         self.sentimento = self.var_teste_original['sentimento']
         self.data_df = self.var_teste_original['data']
         self.var_teste = self.var_teste.drop(columns=colunas_pro_drop)
-        self.train = self.train.drop(columns=['sigla', 'data', 'sentimento', 'artigo_original'])
+        self.train = self.train.drop(columns=['sigla', 'data', 'artigo_original'])
         self.var_teste.reset_index(drop=True)
         self.train.reset_index(drop=True)
 

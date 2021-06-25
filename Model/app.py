@@ -72,15 +72,23 @@ def cria_graficos_dinamicos(numero_de_clusters):
     lista_fig3 = graficos.constroi_grafico_3(25, len(numero_de_clusters))
     lista_fig4 = graficos.constroi_grafico_4(len(numero_de_clusters))
     fig5 = graficos.constroi_grafico_5()
+    fig6 = graficos.constroi_grafico_6()
     lista_html = []
 
-    grafico5 = html.Div(className='menu3', children=[
-        html.Div(className='menu2', children=[
-            dcc.Graph(figure=fig5)
+    grafico5e6 = html.Div(className='menu3', children=[
+        html.Div(id=f'graficos0', children=[
+            html.Div(className='menu2', children=[
+                dcc.Graph(figure=fig5)
+            ]),
+            html.Div(className='menu2', children=[
+                dcc.Graph(figure=fig6)
+            ]),
         ]),
 
     ])
-    lista_html.append(grafico5)
+    lista_html.append(grafico5e6)
+
+
 
     for index in range(len(lista_fig2)):
         '''try:'''

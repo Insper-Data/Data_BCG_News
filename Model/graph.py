@@ -55,6 +55,13 @@ class Graficos:
         self.colors = ['Tealgrn', 'dense', 'algae', 'Aggrnyl', 'Teal', 'Agsunset', 'Tealgrn', 'dense', 'algae',
                        'Aggrnyl',
                        'Teal', 'Agsunset']
+        self.rgb_first_continuos_color = {'Tealgrn': 'rgb(176, 242, 188)',
+                                          'dense': 'rgb(230, 240, 240)',
+                                          'algae': 'rgb(214, 249, 207)',
+                                          'Aggrnyl': 'rgb(36, 86, 104)',
+                                          'Teal': 'rgb(209, 238, 234)',
+                                          'Agsunset': 'rgb(75, 41, 145)'}
+
         self.rgb_last_continuos_color = {'Tealgrn': 'rgb(37, 125, 152)',
                                          'dense': 'rgb(54, 14, 36)',
                                          'algae': 'rgb(17, 36, 20)',
@@ -69,6 +76,7 @@ class Graficos:
         self.is_load = False
         self.df_loaded = False
         self.df_loadedv2 = False
+        self.discreate_colors = ''
 
     def pega_conteudo_auxilar(self):
         with urlopen(
@@ -350,17 +358,18 @@ class Graficos:
 
         df_result.fillna(0, inplace=True)
         df_result['dominante'] = df_result.idxmax(axis=1)
-        print(df_result)
+        #print(df_result)
 
         df_dominante = pd.concat([self.df2, df_result['dominante']], axis=1)
         df_dominante.fillna('Sem grupo', inplace=True)
-        print(df_dominante)
+        #print(df_dominante)
 
         colunas = df_result.columns.tolist()
         del colunas[-1]
-        color_discreate_map = dict(zip(colunas, self.rgb_last_continuos_color.values()))
+        self.discreate_colors = dict(zip(colunas, self.rgb_first_continuos_color.values()))
+        color_discreate_map = dict(zip(colunas, self.rgb_first_continuos_color.values()))
         color_discreate_map['Sem grupo'] = 'rgb(235,235,235)'
-        print(color_discreate_map)
+        #print(color_discreate_map)
         fig = px.choropleth(
             data_frame=df_dominante,
             locations='Estado',
@@ -368,11 +377,49 @@ class Graficos:
             color='dominante',
             hover_name='Estado',
             hover_data=['dominante', "Longitude", "Latitude"],
-            color_discrete_map=color_discreate_map
+            color_discrete_map=self.discreate_colors
         )
         fig.update(layout_coloraxis_showscale=False)
         fig.update_geos(fitbounds="locations", visible=False)
         fig.update_layout(title_text=f"<b>Clusters mais dominantes em cada estado<b>", title_x=0.5,
                           )
+
+        return fig
+
+    def constroi_grafico_6(self):
+        if self.is_load:
+            df = self.df_loadedv2
+
+        else:
+            df = self.df_final
+
+        df2 = df.copy()
+        df2.drop(columns=['data', 'unique_identifier', 'sigla'], inplace=True)
+        lista_cluster = []
+        lista_variedade_lexical = []
+        lista_sentimento_medio = []
+        lista_numero_de_artigos = []
+        for cluster in df2.label.unique().tolist():
+            dfx = df2[df2.label == cluster].copy()
+            lista_sentimento_medio.append(dfx.sentimento.mean())
+            dfx.drop(columns=['label', 'sentimento'], inplace=True)
+            filtro = dfx.sum(axis=0) != 0
+            dfz = dfx[dfx.columns[~filtro]]
+            lista_cluster.append(f'cluster {cluster}')
+            lista_variedade_lexical.append(dfz.shape[1])
+            lista_numero_de_artigos.append(dfz.shape[0])
+
+        dff = pd.DataFrame({'clusters': lista_cluster,
+                            'variedade_lexical': lista_variedade_lexical,
+                            'sentimento_medio': np.array(lista_sentimento_medio) * 100,
+                            'numero_de_artigos': lista_numero_de_artigos})
+        fig = px.scatter(data_frame=dff,
+                         x='sentimento_medio',
+                         y='variedade_lexical',
+                         size='numero_de_artigos',
+                         color='clusters',
+                         color_discrete_map=self.discreate_colors)
+        fig.update_layout(title_text=f"<b>Sentimento pela variedade lexical<b>", title_x=0.5,
+                          template='simple_white')
 
         return fig

@@ -12,7 +12,7 @@ import ssl
 import nltk
 
 # # USUÁRIO
-USUARIO = "WILGNER"
+USUARIO = "RODRIGO"
 
 # # Desabilitando verificação de ssh  #### Usar isso se o download do nltk data falhar
 # try:
@@ -24,15 +24,15 @@ USUARIO = "WILGNER"
 
 # # Lendo arquivo com paths
 path_atual = os.getcwd()
-path_aux = path_atual.replace("Vars", r"aux_funcs/")
-arquivo_path = open(f'{path_aux}/set_path.py', 'r')
+path_aux = os.path.abspath(path_atual.replace("Vars", r"aux_funcs/"))
+arquivo_path = open(os.path.abspath(f'{path_aux}/set_path.py'), 'r')
 ler_arquivo = arquivo_path.read()
 dicionario = ast.literal_eval(ler_arquivo)
 path_drive = dicionario[USUARIO]
 
 # # Importando léxico de Sentimentos
-path_preproc = f"{path_drive}/Preproc"
-df_lexicon = pd.read_csv(f"{path_preproc}/Lexicon/oplexicon_v3.csv")
+path_preproc = os.path.abspath(f"{path_drive}/Preproc")
+df_lexicon = pd.read_csv(os.path.abspath(f"{path_preproc}/Lexicon/oplexicon_v3.csv"))
 dict_lexicon = df_lexicon.set_index("term").to_dict()
 
 # variaveis para limpeza

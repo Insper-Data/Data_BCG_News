@@ -81,7 +81,7 @@ def clean_text_func(text):
     texto_sem_pontuacao = remove_punctuation(texto)
     texto_sem_acento = remove_accents(texto_sem_pontuacao)
     texto_pos_regex = re.sub(
-        r"(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)|^rt|http.+?|[0-9.*]", "", texto_sem_acento).strip()
+        r"(@[A-Za-z0-9]+)|([^0-9A-Za-zç \t])|(\w+:\/\/\S+)|^rt|http.+?|[0-9.*]", "", texto_sem_acento).strip()
     texto_sem_stopword = remove_stopwords(texto_pos_regex).split()
 
     stem_text = [pt_stemmer.stem(word) for word in texto_sem_stopword]
@@ -112,6 +112,3 @@ def get_polarity(texto):
     except:
         mean_polarity = 0
     return mean_polarity
-
-
-

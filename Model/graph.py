@@ -203,6 +203,7 @@ class Graficos:
                                                 columns=['label']).sum(axis=0).nlargest(numero2).values.tolist()})
                     scale = [(self.rgb_last_continuos_color[self.colors[numero]]),
                              (self.rgb_last_continuos_color[self.colors[numero]])]
+
                     fig = px.bar(df_data, x='word', y='value', color_continuous_scale=scale,
                                  color='value',
                                  )
@@ -226,6 +227,7 @@ class Graficos:
                                                 columns=['label']).sum(axis=0).nlargest(numero2).values.tolist()})
                     scale = [(self.rgb_last_continuos_color[self.colors[numero]]),
                              (self.rgb_last_continuos_color[self.colors[numero]])]
+
                     fig = px.bar(df_data, x='word', y='value', color_continuous_scale=scale,
                                  color='value',
                                  )
@@ -260,10 +262,11 @@ class Graficos:
                                         'value': self.df_loaded[self.df_loaded.label == numero].drop(
                                             columns=['label']).sum(axis=0).nlargest(numero2).values.tolist()})
                 #print(df_data)
+
                 df_data.value = df_data.value.astype(float)
                 df_data.value += +0.001
                 img = BytesIO()
-
+                #print(df_data.head())
                 imagem_wc = self.plot_wordcloud(df_data)
                 imagem_wc.save(img, format='PNG')
 
@@ -272,13 +275,15 @@ class Graficos:
 
             else:
                 df_data = pd.DataFrame({'word': self.zeus.var_teste[self.zeus.var_teste.label == numero].drop(
-                    columns=['label']).sum(axis=0).nlargest(numero2).index.tolist(),
+                    columns=['label', 'sentimento']).sum(axis=0).nlargest(numero2).index.tolist(),
                                         'value': self.zeus.var_teste[self.zeus.var_teste.label == numero].drop(
                                             columns=['label']).sum(axis=0).nlargest(numero2).values.tolist()})
                 #print(df_data)
+
                 df_data.value = df_data.value.astype(float)
                 df_data.value += +0.001
                 img = BytesIO()
+                print(df_data.head())
                 imagem_wc = self.plot_wordcloud(df_data)
                 imagem_wc.save(img, format='PNG')
 
@@ -366,9 +371,10 @@ class Graficos:
 
         colunas = df_result.columns.tolist()
         del colunas[-1]
-        self.discreate_colors = dict(zip(colunas, self.rgb_first_continuos_color.values()))
-        color_discreate_map = dict(zip(colunas, self.rgb_first_continuos_color.values()))
-        color_discreate_map['Sem grupo'] = 'rgb(235,235,235)'
+        print(df_dominante.head())
+        color_discreate_map = dict(zip(colunas, self.rgb_last_continuos_color.values()))
+        color_discreate_map['Sem grupo'] = 'rgb(255, 210, 255)'
+        self.discreate_colors = dict(zip(colunas, self.rgb_last_continuos_color.values()))
         #print(color_discreate_map)
         fig = px.choropleth(
             data_frame=df_dominante,
@@ -407,7 +413,7 @@ class Graficos:
             filtro = dfx.sum(axis=0) != 0
             dfz = dfx[dfx.columns[filtro]]
             print(dfz.shape)
-            lista_cluster.append(f'cluster {cluster}')
+            lista_cluster.append(f'Cluster {cluster}')
             lista_variedade_lexical.append(dfz.shape[1])
             lista_numero_de_artigos.append(dfz.shape[0])
 

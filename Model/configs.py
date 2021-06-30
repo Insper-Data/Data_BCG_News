@@ -9,12 +9,12 @@ USERS = {'Wilgner': 'Wilgner',
 
 NUMERO_DE_AMOSTRAS = 5
 PORCENTAGEM_PARA_CRIACAO = 0.3
-PORCENTAGEM_PARA_SAMPLE = 0.2
+PORCENTAGEM_PARA_SAMPLE = 0.3
 
 
 def constroi_id(termo):
 
-    treino_id = f'var_tfidf_{termo}_10_2021-06-24_0'
-    teste_id = f'var_tfidf_{termo}_90_2021-06-24_0'
+    treino_id = f'var_tfidf_{termo.lower()}_10_2021-06-25_0'
+    teste_id = f'var_tfidf_{termo.lower()}_90_2021-06-25_0'
 
     return [treino_id, teste_id]

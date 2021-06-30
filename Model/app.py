@@ -2,6 +2,7 @@ import dash
 import dash_html_components as html
 import dash_core_components as dcc
 from dash.dependencies import Output, Input, State
+import dash_bootstrap_components as dbc
 from dash_callback_conglomerate import Router
 from components.components import Dashboard
 import os
@@ -29,10 +30,6 @@ app.config.suppress_callback_exceptions = True
 user = 'Wilgner'
 
 componentes = Dashboard()
-graficos = Graficos()
-graficos.pega_conteudo_auxilar()
-graficos.coleta_dados_do_json()
-graficos.prepara_df_aux()
 
 app.layout = html.Div(id='main',
                       children=[
@@ -62,11 +59,14 @@ app.layout = html.Div(id='main',
                           html.Div(className='run-button', children=[
                               componentes.cria_botao()
                           ]),
-                          html.Div(id='container-main2', children=[]),
+                          dcc.Loading(children=[
+                              html.Div(id='container-main2', children=[]),
+                          ],color='#48A5E8', type='dot', fullscreen=True)
+
                       ])
 
 
-def cria_graficos_dinamicos(numero_de_clusters):
+def cria_graficos_dinamicos(graficos, numero_de_clusters):
     lista_fig = graficos.constroi_grafico_1(len(numero_de_clusters))
     lista_fig2 = graficos.constroi_grafico_2(10, len(numero_de_clusters))
     lista_fig3 = graficos.constroi_grafico_3(25, len(numero_de_clusters))
@@ -87,8 +87,6 @@ def cria_graficos_dinamicos(numero_de_clusters):
 
     ])
     lista_html.append(grafico5e6)
-
-
 
     for index in range(len(lista_fig2)):
         '''try:'''
@@ -133,6 +131,8 @@ def cria_graficos_dinamicos(numero_de_clusters):
                State(component_id='container-main2', component_property='children')],
               )
 def printa_info(n_clicks, input_termo, input_local, data_inicial, data_final, lista_html):
+    graficos = Graficos()
+
     ctx = dash.callback_context
 
     if not ctx.triggered:
@@ -154,22 +154,28 @@ def printa_info(n_clicks, input_termo, input_local, data_inicial, data_final, li
         result = f'{string_file_name}.parquet'
 
         if result in file_dir:
+            graficos.pega_conteudo_auxilar()
+            graficos.coleta_dados_do_json()
+            graficos.prepara_df_aux()
             graficos.zeus.pega_variaveis(load_df=True, file_name_load=result)
             graficos.faz_agregacao(graficos.zeus.load_df, is_load=True)
             numero_de_clusters = graficos.cria_df_pronto()
-            lista_html = cria_graficos_dinamicos(numero_de_clusters)
+            lista_html = cria_graficos_dinamicos(graficos, numero_de_clusters)
 
         else:
+            graficos.pega_conteudo_auxilar()
+            graficos.coleta_dados_do_json()
+            graficos.prepara_df_aux()
             graficos.executa_zeus(input_termo, user)
             graficos.roda_modelo(local=input_local,
                                  data_start=data_inicial,
                                  data_end=data_final)
 
             numero_de_clusters = graficos.cria_df_pronto()
-            lista_html = cria_graficos_dinamicos(numero_de_clusters)
+            lista_html = cria_graficos_dinamicos(graficos, numero_de_clusters)
             path_name = f'{graficos.zeus.path_user}Model//'
             os.chdir(os.path.dirname(path_name))
-            print(graficos.df_final)
+            # print(graficos.df_final)
             graficos.df_final.to_parquet(f'{string_file_name}.parquet')
 
         return [lista_html]

@@ -8,7 +8,7 @@ class Dashboard:
 
     def cria_header(self):
         return html.H1(className='titulo',
-                       children='Clusterização nacional de noticias'
+                       children='Clusterização Nacional de Notícias'
                        )
 
     def cria_dropdown_termo_de_busca(self):
@@ -16,7 +16,7 @@ class Dashboard:
                             options=[
                                 {'label': 'Bolsonaro', 'value': 'Bolsonaro'},
                                 {'label': 'Lula', 'value': 'Lula'},
-                                {'label': 'Neymar', 'value': 'Ney'},
+                                {'label': 'Neymar', 'value': 'Neymar'},
 
                             ],
 
